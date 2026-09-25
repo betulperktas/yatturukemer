@@ -1,0 +1,853 @@
+/* ==========================================================================
+   Kemer Yat Turu - Koy detay sayfalari icin TR / EN / RU ceviri motoru
+   Ana sayfadaki (index.html) data-i18n mimarisiyle birebir ayni mantik:
+     data-i18n        -> elementin metni (textContent)
+     data-i18n-html   -> icinde <strong>/<a> olan zengin metin (innerHTML)
+     data-i18n-alt    -> img alt metni
+     data-i18n-aria   -> aria-label
+     data-wa          -> WhatsApp mesaji (WA_MESSAGES anahtari)
+   Dil secimi localStorage('kemeryat_lang') ile ana sayfayla paylasilir;
+   paylasilabilir baglanti: korsan-magarasi.html?lang=en
+   Sayfa dili <html data-koy="..."> niteliginden okunur.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var WA_NUMBER = 'https://wa.me/905321139244?text=';
+  var OG_LOCALES = { tr: 'tr_TR', en: 'en_US', ru: 'ru_RU' };
+  var STORAGE_KEY = 'kemeryat_lang';
+
+  /* ===================== ORTAK ARAYUZ METINLERI ===================== */
+  var SHARED = {
+    tr: {
+      brand_sub: "Lüks Tekne Turları",
+      aria_crumb: "Sayfa yolu",
+      aria_menu: "Ana menü",
+      nav_home: "Ana Sayfa",
+      nav_bays: "Koylar",
+      nav_program: "Tur Programı",
+      nav_faq: "S.S.S.",
+      nav_location: "Konum",
+      nav_call: "Hemen Ara",
+      nav_wa: "WhatsApp",
+      cta_ask: "WhatsApp'tan Sor",
+      cta_program: "Tur Programını Gör",
+      cta_write: "WhatsApp'tan Yaz",
+      cta_book: "WhatsApp'tan Yer Ayır",
+      side_tour: "Tur Bilgisi",
+      side_depart: "Kalkış:",
+      side_fleet: "Filomuz:",
+      side_incl: "Dahil:",
+      side_route: "Rota:",
+      side_dur: "Süre:",
+      side_depart_v: "Kemer Marina, her gün 09:30",
+      side_fleet_v: "Lüks yatlar ve geleneksel guletler",
+      side_incl_v: "öğle yemeği, tatlı ikramı, sınırsız soft içecek",
+      side_route_v: "Phaselis, Cennet Koyu, Akvaryum Koyu, Korsan Mağarası",
+      side_dur_v: "gün boyu (yaklaşık 09:30 – 17:00)",
+      side_stop: "Bu Koyda Mola Süresi",
+      side_book: "Rezervasyon",
+      side_book_text: "WhatsApp'tan yazın; müsaitlik ve kalkış bilgisi dakikalar içinde netleşir.",
+      faq_title: "Sık Sorulan Sorular",
+      faq_more_pre: "Sorunuzun yanıtını bulamadınız mı?",
+      faq_more_link: "WhatsApp'tan yazın",
+      faq_more_mid: "veya",
+      faq_more_post: "numarasını arayın.",
+      more_title: "Rotamızdaki Diğer Koylar",
+      more_phaselis: "Phaselis Koyu",
+      more_phaselis_desc: "Antik kentin üç doğal limanı, çam ormanı ve berrak su.",
+      more_cennet: "Cennet Koyu",
+      more_cennet_desc: "Turkuaz su, kumlu plaj ve öğle yemeği molası.",
+      more_akvaryum: "Akvaryum Koyu",
+      more_akvaryum_desc: "Balık sürüleri ve yüksek görüş mesafesiyle snorkel molası.",
+      more_korsan: "Korsan Mağarası",
+      more_korsan_desc: "Kayalara gizlenmiş doğal deniz mağarası ve fotoğraf molası.",
+      more_korsan_alt: "Korsan Koyu açıklarında derin mavi deniz – tekne turuyla yaklaşılan kayalık koy",
+      more_phaselis_alt: "Phaselis Koyu'nda çam ormanına bakan berrak deniz – Kemer yat turu rotası",
+      more_cennet_alt: "Cennet Koyu'nda turkuaz su ve kumlu plaj – Kemer yat turu rotası",
+      more_akvaryum_alt: "Akvaryum Koyu'nda berrak su ve balık sürüleri – snorkel molası",
+      foot_about: "Kemer Marina merkezli günlük lüks yat turları. Phaselis, Cennet Koyu, Akvaryum Koyu ve Korsan Mağarası rotasında yüzme, snorkel ve öğle yemeği dahil.",
+      foot_bays: "Koylar",
+      foot_contact: "İletişim",
+      foot_wa: "WhatsApp'tan yaz",
+      foot_program: "Tur Programı"
+    },
+    en: {
+      brand_sub: "Luxury Boat Tours",
+      aria_crumb: "Breadcrumb",
+      aria_menu: "Main menu",
+      nav_home: "Home",
+      nav_bays: "Bays",
+      nav_program: "Tour Programme",
+      nav_faq: "FAQ",
+      nav_location: "Location",
+      nav_call: "Call Now",
+      nav_wa: "WhatsApp",
+      cta_ask: "Ask on WhatsApp",
+      cta_program: "See the Programme",
+      cta_write: "Message on WhatsApp",
+      cta_book: "Reserve on WhatsApp",
+      side_tour: "Tour Information",
+      side_depart: "Departure:",
+      side_fleet: "Our Fleet:",
+      side_incl: "Included:",
+      side_route: "Route:",
+      side_dur: "Duration:",
+      side_depart_v: "Kemer Marina, every day at 09:30",
+      side_fleet_v: "Luxury yachts and traditional gulets",
+      side_incl_v: "lunch, dessert service, unlimited soft drinks",
+      side_route_v: "Phaselis, Paradise Bay, Aquarium Bay, Pirate Cave",
+      side_dur_v: "full day (approx. 09:30 – 17:00)",
+      side_stop: "Stop Duration in This Bay",
+      side_book: "Booking",
+      side_book_text: "Message us on WhatsApp; availability and departure details are confirmed within minutes.",
+      faq_title: "Frequently Asked Questions",
+      faq_more_pre: "Couldn't find your answer?",
+      faq_more_link: "Message us on WhatsApp",
+      faq_more_mid: "or call",
+      faq_more_post: ".",
+      more_title: "Other Bays on Our Route",
+      more_phaselis: "Phaselis Bay",
+      more_phaselis_desc: "Three natural harbours of the ancient city, pine forest and clear water.",
+      more_cennet: "Paradise Bay",
+      more_cennet_desc: "Turquoise water, sandy beach and our lunch stop.",
+      more_akvaryum: "Aquarium Bay",
+      more_akvaryum_desc: "Snorkelling stop with schools of fish and great underwater visibility.",
+      more_korsan: "Kemer Pirate Cave",
+      more_korsan_desc: "A natural sea cave hidden in the rocks and a photo stop.",
+      more_korsan_alt: "Deep blue sea off Pirate Bay – a rocky bay approached by boat tour",
+      more_phaselis_alt: "Clear water facing the pine forest in Phaselis Bay – Kemer boat tour route",
+      more_cennet_alt: "Turquoise water and sandy beach in Paradise Bay – Kemer boat tour route",
+      more_akvaryum_alt: "Clear water and schools of fish in Aquarium Bay – snorkelling stop",
+      foot_about: "Daily luxury yacht tours based at Kemer Marina. Swimming, snorkelling and lunch are included on the route through Phaselis, Paradise Bay, Aquarium Bay and the Pirate Cave.",
+      foot_bays: "Bays",
+      foot_contact: "Contact",
+      foot_wa: "Message on WhatsApp",
+      foot_program: "Tour Programme"
+    },
+    ru: {
+      brand_sub: "Роскошные морские туры",
+      aria_crumb: "Навигационная цепочка",
+      aria_menu: "Главное меню",
+      nav_home: "Главная",
+      nav_bays: "Бухты",
+      nav_program: "Программа тура",
+      nav_faq: "Вопросы",
+      nav_location: "Локация",
+      nav_call: "Позвонить",
+      nav_wa: "WhatsApp",
+      cta_ask: "Спросить в WhatsApp",
+      cta_program: "Смотреть программу",
+      cta_write: "Написать в WhatsApp",
+      cta_book: "Забронировать в WhatsApp",
+      side_tour: "Информация о туре",
+      side_depart: "Отправление:",
+      side_fleet: "Наш флот:",
+      side_incl: "Включено:",
+      side_route: "Маршрут:",
+      side_dur: "Длительность:",
+      side_depart_v: "Марина Кемера, ежедневно в 09:30",
+      side_fleet_v: "Роскошные яхты и традиционные гулеты",
+      side_incl_v: "обед, десерт, безлимитные безалкогольные напитки",
+      side_route_v: "Фазелис, Райская бухта, Аквариум бухта, Пиратская пещера",
+      side_dur_v: "весь день (примерно 09:30 – 17:00)",
+      side_stop: "Длительность остановки в бухте",
+      side_book: "Бронирование",
+      side_book_text: "Напишите в WhatsApp — наличие мест и время отправления подтвердим в течение нескольких минут.",
+      faq_title: "Часто задаваемые вопросы",
+      faq_more_pre: "Не нашли ответ на свой вопрос?",
+      faq_more_link: "Напишите в WhatsApp",
+      faq_more_mid: "или позвоните по номеру",
+      faq_more_post: ".",
+      more_title: "Другие бухты нашего маршрута",
+      more_phaselis: "Бухта Фазелис",
+      more_phaselis_desc: "Три естественные гавани древнего города, сосновый лес и прозрачная вода.",
+      more_cennet: "Райская бухта",
+      more_cennet_desc: "Бирюзовая вода, песчаный пляж и остановка на обед.",
+      more_akvaryum: "Аквариум бухта",
+      more_akvaryum_desc: "Остановка для снорклинга: стаи рыб и отличная видимость под водой.",
+      more_korsan: "Пиратская пещера",
+      more_korsan_desc: "Природная морская пещера, спрятанная в скалах, и остановка для фото.",
+      more_korsan_alt: "Глубокое синее море у Пиратской бухты — скалистая бухта, к которой подходят на лодке",
+      more_phaselis_alt: "Прозрачная вода у соснового леса в бухте Фазелис — маршрут морской прогулки в Кемере",
+      more_cennet_alt: "Бирюзовая вода и песчаный пляж в Райской бухте — маршрут морской прогулки в Кемере",
+      more_akvaryum_alt: "Прозрачная вода и стаи рыб в Аквариум бухте — остановка для снорклинга",
+      foot_about: "Ежедневные морские прогулки на роскошных яхтах из марины Кемера. Купание, снорклинг и обед включены на маршруте Фазелис, Райская бухта, Аквариум бухта и Пиратская пещера.",
+      foot_bays: "Бухты",
+      foot_contact: "Контакты",
+      foot_wa: "Написать в WhatsApp",
+      foot_program: "Программа тура"
+    }
+  };
+
+  /* ===================== SAYFALARA OZEL METINLER ===================== */
+  var PAGES = {};
+
+  PAGES.phaselis = {
+    tr: {
+      meta_title: "Phaselis Koyu Kemer | Antik Kent ve Tekne Turu Rehberi",
+      meta_desc: "Phaselis Koyu rehberi: antik kentin üç doğal limanı, çam ormanı ve berrak deniz. Kemer Marina'dan günlük tekne turuyla 60 dakika mola, yüzme ve snorkel.",
+      crumb: "Phaselis Koyu",
+      eyebrow: "Kemer Marina'dan günlük tekne turu · 60 dk mola",
+      h1: "Phaselis Koyu: Antik Kentin Üç Doğal Limanı",
+      lead: "Çam ormanıyla çevrili üç doğal liman, antik kent kalıntıları ve berrak deniz. Phaselis Koyu, Kemer'in en çok merak edilen duraklarından biri: aynı molada hem yüzüyorsunuz hem de 2.500 yıllık liman kentinin izlerini görüyorsunuz.",
+      fact1_v: "60 dk", fact1_l: "Turumuzda koyda mola süresi",
+      fact2_v: "3 liman", fact2_l: "Antik kentin doğal koyu",
+      fact3_v: "Yüzme", fact3_l: "Çam ormanına bakan berrak su",
+      fact4_v: "Kemer", fact4_l: "Marina çıkışlı günlük tur",
+      sec1_h2: "Phaselis Koyu Nerede, Nasıl Gidilir?",
+      sec1_p1: "Phaselis, Kemer'in doğusunda, Kemer–Kumluca kara yolu üzerinde yer alan antik bir liman kentidir. Kentin <strong>üç doğal limanı</strong>, çam ormanıyla çevrili üç ayrı koy oluşturur; bölge Olympos-Beydağları Milli Parkı sınırları içinde kalır.",
+      sec1_p2: "Koya iki şekilde ulaşılıyor: <strong>denizden</strong> Kemer Marina'dan kalkan günlük tekne turlarıyla, <strong>kara yolundan</strong> ise araçla. Antik kent girişinde müze kartı veya giriş ücreti uygulanır; ücretler dönemsel olarak değişebildiği için güncel tutarı girişte kontrol etmenizi öneririz.",
+      sec1_p3: "Günlük yat turumuz Phaselis'e denizden gelir ve burada mola verir; böylece yüzme, snorkel ve kalıntıları görme aynı durakta birleşir.",
+      sec2_h2: "Phaselis Koyu'nda Ne Yapılır?",
+      sec2_li1: "<strong>Yüzme:</strong> Koylar rüzgâra kapalı, dip yapısı büyük ölçüde kumludur; bu yüzden yüzme ve serinleme için rahat bir alandır.",
+      sec2_li2: "<strong>Snorkel:</strong> Berrak suda taş ve kaya çevresinde küçük balık sürüleri görülebilir. Maske ve şnorkel getirmenizi öneririz.",
+      sec2_li3: "<strong>Antik kent:</strong> Tiyatro, hamamlar, agora ve su kemeri kalıntıları kıyının hemen arkasındadır. Phaselis, Lykia Uygarlığı'nın en önemli liman kentlerinden biridir ve tarihi M.Ö. 7. yüzyıla kadar uzanır.",
+      sec2_li4: "<strong>Fotoğraf:</strong> Çam ormanı, taş kalıntılar ve turkuaz suyun birleştiği kareler için bölgenin en iyi duraklarından biri.",
+      sec2_li5: "<strong>Yürüyüş:</strong> Bölge, Likya Yolu'nun bilinen etaplarına yakındır; doğa yürüyüşü sevenler için ayrı bir ziyaret planlanabilir.",
+      sec3_h2: "Turumuzda Phaselis Koyu",
+      sec3_p1: "Kemer Marina'dan her gün <strong>09:30</strong> kalkıyoruz. Filomuzdaki lüks yatlar ve guletlerle koylar arasında seyrederek Phaselis Koyu'na ulaşıyor, burada <strong>60 dakika</strong> mola veriyoruz. Teknede can yeleği, güvenlik ekipmanı, öğle yemeği, meyve ve sınırsız soft içecek hazır.",
+      sec3_p2: "Tur programının tamamı için <a href=\"index.html#program\">tur programı ve dahil hizmetlere</a> göz atabilir, kalkış noktasını <a href=\"index.html#konum\">Kemer Marina konum</a> bölümünden görebilirsiniz.",
+      sec4_h2: "Phaselis Koyu İçin En İyi Ziyaret Zamanı",
+      sec4_p1: "Deniz sıcaklığı ve suyun berraklığı <strong>Mayıs–Ekim</strong> arasında en iyi seviyededir. Temmuz ve Ağustos en kalabalık dönemdir; turumuz sabah 09:30 kalkışıyla koylara öğle kalabalığından önce ulaşır. Nisan ve Kasım aylarında deniz daha serin olur, rota hava koşullarına göre kaptanımız tarafından güncellenir.",
+      sec5_h2: "Yanınıza Almanız Gerekenler",
+      sec5_li1: "Mayo, havlu ve yedek kıyafet",
+      sec5_li2: "Yüksek faktörlü güneş kremi, şapka ve güneş gözlüğü",
+      sec5_li3: "Taşlık zemin için deniz ayakkabısı",
+      sec5_li4: "Telefon ve fotoğraf makinesi için su geçirmez kılıf",
+      sec5_li5: "Antik alan giriş ücreti için nakit veya kart",
+      note: "<b>Not:</b> Tur programı ve mola süreleri, hava ve deniz koşullarına göre kaptanımız tarafından güvenli şekilde güncellenebilir. Antik kent giriş ücretleri ve müze kartı uygulaması ilgili kurumun kararına bağlıdır.",
+      stop: "Turumuzda Phaselis Koyu'nda 60 dakika mola veriyoruz; yüzme, snorkel ve kıyıdaki kalıntıları görme için yeterli bir süre. Antik kenti baştan sona gezmek isterseniz kara yoluyla ayrı bir ziyaret öneririz.",
+      faq_q1: "Phaselis Koyu'na nasıl gidilir?",
+      faq_a1: "Phaselis Koyu'na iki şekilde ulaşılır: Kemer Marina'dan kalkan günlük tekne turlarıyla denizden, ya da Kemer–Kumluca kara yolu üzerinden araçla. Bölge Olympos-Beydağları Milli Parkı içinde yer aldığı için antik kent girişinde müze kartı veya giriş ücreti uygulanır. Günlük yat turumuzda koya denizden geliyor ve 60 dakika mola veriyoruz.",
+      faq_q2: "Phaselis Koyu'nda yüzmek güvenli mi?",
+      faq_a2: "Koylar rüzgâra kapalı ve dip yapısı genelde kumludur; bu yüzden yüzme ve snorkel için rahat bir alandır. Her teknede can yeleği bulunur ve kaptanımız deniz koşullarına göre yüzme alanının sınırlarını gösterir. Çocuklu misafirlerimizi can yeleğiyle yüzmeye teşvik ederiz.",
+      faq_q3: "Antik kenti gezmek için ne kadar zaman gerekir?",
+      faq_a3: "Turumuzda Phaselis'te 60 dakika mola veriyoruz; bu süre yüzme, snorkel ve kıyıdaki antik kalıntıları görme için yeterlidir. Antik kenti baştan sona gezmek isteyen misafirlerimiz için kara yoluyla ayrı bir ziyaret daha uygun olur.",
+      faq_q4: "Phaselis Koyu hangi aylarda daha iyi?",
+      faq_a4: "Mayıs–Ekim arası deniz sıcaklığı ve görüş mesafesi en iyidir. Temmuz–Ağustos en kalabalık dönemdir; sabah 09:30 kalkışıyla koylara öğle kalabalığından önce ulaşırız. Nisan ve Kasım aylarında deniz daha serin olur ve rota hava koşullarına göre güncellenir.",
+      cta_title: "Phaselis Koyu'nu Yerinde Görün",
+      cta_text: "Kemer Marina'dan her gün 09:30 kalkış. Öğle yemeği, meyve ve sınırsız soft içecek dahil; can yeleği ve güvenlik ekipmanı teknede hazır. Yerinizi birkaç dakikada ayırtın."
+    },
+    en: {
+      meta_title: "Phaselis Bay Kemer | Ancient City and Boat Tour Guide",
+      meta_desc: "Guide to Phaselis Bay: three natural harbours of the ancient city, pine forest and clear sea. A 60-minute stop for swimming and snorkelling on our daily boat tour from Kemer Marina.",
+      crumb: "Phaselis Bay",
+      eyebrow: "Daily boat tour from Kemer Marina · 60 min stop",
+      h1: "Phaselis Bay: The Three Natural Harbours of the Ancient City",
+      lead: "Three natural harbours surrounded by pine forest, ancient ruins and clear sea. Phaselis Bay is one of the most curious stops in Kemer: in one stop you both swim and see the traces of a 2,500-year-old harbour city.",
+      fact1_v: "60 min", fact1_l: "Bay stop on our tour",
+      fact2_v: "3 harbours", fact2_l: "Natural bay of the ancient city",
+      fact3_v: "Swimming", fact3_l: "Clear water facing the pine forest",
+      fact4_v: "Kemer", fact4_l: "Daily tour from the marina",
+      sec1_h2: "Where Is Phaselis Bay and How Do You Get There?",
+      sec1_p1: "Phaselis is an ancient harbour city east of Kemer, on the Kemer–Kumluca road. Its <strong>three natural harbours</strong> form three separate bays surrounded by pine forest; the area lies within Olympos-Beydağları National Park.",
+      sec1_p2: "The bay can be reached in two ways: <strong>by sea</strong> on a daily boat tour departing from Kemer Marina, or <strong>by road</strong> by car. A museum card or an entrance fee applies at the ancient city; fees change seasonally, so we suggest checking the current amount at the entrance.",
+      sec1_p3: "Our daily yacht tour arrives at Phaselis by sea and stops here, so swimming, snorkelling and seeing the ruins all happen at the same stop.",
+      sec2_h2: "What Do You Do in Phaselis Bay?",
+      sec2_li1: "<strong>Swimming:</strong> The bays are sheltered from the wind and the bottom is mostly sandy, which makes them comfortable for swimming and cooling off.",
+      sec2_li2: "<strong>Snorkelling:</strong> Schools of small fish can be seen around the stones and rocks in the clear water. We recommend bringing a mask and snorkel.",
+      sec2_li3: "<strong>Ancient city:</strong> The theatre, baths, agora and aqueduct ruins are right behind the shore. Phaselis is one of the most important harbour cities of Lycian civilisation, dating back to the 7th century BC.",
+      sec2_li4: "<strong>Photography:</strong> One of the best spots in the region for frames where the pine forest, the stone ruins and the turquoise water come together.",
+      sec2_li5: "<strong>Walking:</strong> The area is close to well-known sections of the Lycian Way; a separate visit can be planned for hiking lovers.",
+      sec3_h2: "Phaselis Bay on Our Tour",
+      sec3_p1: "We depart from Kemer Marina every day at <strong>09:30</strong>. Sailing between the bays with the luxury yachts and gulets in our fleet we reach Phaselis Bay and stop here for <strong>60 minutes</strong>. Life jackets, safety equipment, lunch, fruit and unlimited soft drinks are ready on board.",
+      sec3_p2: "For the full programme look at <a href=\"index.html#program\">the tour programme and what is included</a>, and see the departure point in the <a href=\"index.html#konum\">Kemer Marina location</a> section.",
+      sec4_h2: "The Best Time to Visit Phaselis Bay",
+      sec4_p1: "Sea temperature and water clarity are at their best between <strong>May and October</strong>. July and August are the busiest period; with our 09:30 departure we reach the bays before the midday crowds. In April and November the sea is cooler and the route is updated by our captain according to weather conditions.",
+      sec5_h2: "What to Bring With You",
+      sec5_li1: "Swimsuit, towel and spare clothes",
+      sec5_li2: "High-factor sunscreen, hat and sunglasses",
+      sec5_li3: "Sea shoes for the stony ground",
+      sec5_li4: "Waterproof case for your phone and camera",
+      sec5_li5: "Cash or card for the ancient site entrance fee",
+      note: "<b>Note:</b> The tour programme and stop durations may be safely updated by our captain according to weather and sea conditions. Ancient city entrance fees and museum card rules are decided by the relevant authority.",
+      stop: "On our tour we stop for 60 minutes in Phaselis Bay, which is enough time for swimming, snorkelling and seeing the ruins along the shore. If you want to explore the whole ancient city, we recommend a separate visit by road.",
+      faq_q1: "How do you get to Phaselis Bay?",
+      faq_a1: "Phaselis Bay can be reached in two ways: by sea on a daily boat tour departing from Kemer Marina, or by car on the Kemer–Kumluca road. Because the area is inside Olympos-Beydağları National Park, a museum card or an entrance fee applies at the ancient city. On our daily yacht tour we arrive by sea and stop for 60 minutes.",
+      faq_q2: "Is it safe to swim in Phaselis Bay?",
+      faq_a2: "The bays are sheltered from the wind and the bottom is usually sandy, which makes them comfortable for swimming and snorkelling. Every boat carries life jackets and our captain shows the limits of the swimming area according to sea conditions. We encourage families with children to swim with life jackets.",
+      faq_q3: "How much time do you need to visit the ancient city?",
+      faq_a3: "On our tour we stop for 60 minutes at Phaselis, which is enough for swimming, snorkelling and seeing the ancient ruins along the shore. Guests who want to explore the whole ancient city will find a separate visit by road more suitable.",
+      faq_q4: "Which months are best for Phaselis Bay?",
+      faq_a4: "Between May and October the sea temperature and visibility are at their best. July and August is the busiest period; with the 09:30 departure we reach the bays before the midday crowds. In April and November the sea is cooler and the route is updated according to weather conditions.",
+      cta_title: "See Phaselis Bay in Person",
+      cta_text: "Departure from Kemer Marina every day at 09:30. Lunch, fruit and unlimited soft drinks included; life jackets and safety equipment are ready on board. Reserve your place in a few minutes."
+    },
+    ru: {
+      meta_title: "Бухта Фазелис Кемер | Древний город и морская прогулка",
+      meta_desc: "Гид по бухте Фазелис: три естественные гавани древнего города, сосновый лес и прозрачное море. Остановка 60 минут для купания и снорклинга на нашей ежедневной морской прогулке из марины Кемера.",
+      crumb: "Бухта Фазелис",
+      eyebrow: "Ежедневная морская прогулка из марины Кемера · остановка 60 мин",
+      h1: "Бухта Фазелис: три естественные гавани древнего города",
+      lead: "Три естественные гавани в окружении соснового леса, руины древнего города и прозрачное море. Бухта Фазелис — одна из самых интересных остановок Кемера: за одну стоянку вы и купаетесь, и видите следы портового города возрастом 2500 лет.",
+      fact1_v: "60 мин", fact1_l: "Остановка в бухте на нашем туре",
+      fact2_v: "3 гавани", fact2_l: "Естественная бухта древнего города",
+      fact3_v: "Купание", fact3_l: "Прозрачная вода у соснового леса",
+      fact4_v: "Кемер", fact4_l: "Ежедневный тур из марины",
+      sec1_h2: "Где находится бухта Фазелис и как туда попасть?",
+      sec1_p1: "Фазелис — древний портовый город восточнее Кемера, на трассе Кемер–Кумлуджа. Его <strong>три естественные гавани</strong> образуют три отдельные бухты в окружении соснового леса; территория входит в национальный парк Олимпос-Бейдаглары.",
+      sec1_p2: "Добраться до бухты можно двумя способами: <strong>по морю</strong> на ежедневной морской прогулке из марины Кемера или <strong>по дороге</strong> на автомобиле. При входе в древний город действует музейная карта или входная плата; тарифы меняются по сезонам, поэтому актуальную сумму советуем уточнять на входе.",
+      sec1_p3: "Наша ежедневная морская прогулка приходит в Фазелис по морю и делает здесь остановку, поэтому купание, снорклинг и осмотр руин объединяются в одной стоянке.",
+      sec2_h2: "Что делают в бухте Фазелис?",
+      sec2_li1: "<strong>Купание:</strong> бухты защищены от ветра, дно в основном песчаное — здесь удобно купаться и освежаться.",
+      sec2_li2: "<strong>Снорклинг:</strong> в прозрачной воде у камней и скал можно увидеть небольшие стаи рыб. Рекомендуем взять маску и трубку.",
+      sec2_li3: "<strong>Древний город:</strong> руины театра, бань, агоры и акведука находятся сразу за берегом. Фазелис — один из важнейших портовых городов Ликийской цивилизации, его история уходит в VII век до н. э.",
+      sec2_li4: "<strong>Фотографии:</strong> одно из лучших мест региона для кадров, где соединяются сосновый лес, каменные руины и бирюзовая вода.",
+      sec2_li5: "<strong>Прогулки:</strong> район близок к известным участкам Ликийской тропы; для любителей пеших походов можно запланировать отдельный визит.",
+      sec3_h2: "Бухта Фазелис в нашем туре",
+      sec3_p1: "Мы отправляемся из марины Кемера каждый день в <strong>09:30</strong>. Идя между бухтами на роскошных яхтах и гулетах нашего флота, мы приходим в бухту Фазелис и делаем здесь остановку на <strong>60 минут</strong>. На борту готовы спасательные жилеты, оборудование безопасности, обед, фрукты и безлимитные безалкогольные напитки.",
+      sec3_p2: "Полную программу можно посмотреть в разделе <a href=\"index.html#program\">программа тура и включённые услуги</a>, а место отправления — в разделе <a href=\"index.html#konum\">локация марины Кемера</a>.",
+      sec4_h2: "Лучшее время для посещения бухты Фазелис",
+      sec4_p1: "Температура моря и прозрачность воды оптимальны с <strong>мая по октябрь</strong>. Июль и август — самый многолюдный период; благодаря отправлению в 09:30 мы приходим в бухты до полуденной толпы. В апреле и ноябре море прохладнее, и маршрут обновляется капитаном по погодным условиям.",
+      sec5_h2: "Что взять с собой",
+      sec5_li1: "Купальник, полотенце и сменную одежду",
+      sec5_li2: "Солнцезащитный крем с высоким фактором, панаму и очки",
+      sec5_li3: "Обувь для моря — берег каменистый",
+      sec5_li4: "Водонепроницаемый чехол для телефона и фотоаппарата",
+      sec5_li5: "Наличные или карту для входной платы в древний город",
+      note: "<b>Важно:</b> программа тура и длительность остановок могут безопасно обновляться нашим капитаном по погодным и морским условиям. Входная плата в древний город и правила музейной карты определяются компетентным учреждением.",
+      stop: "В нашем туре мы делаем остановку в бухте Фазелис на 60 минут — этого достаточно для купания, снорклинга и осмотра руин вдоль берега. Если вы хотите обойти весь древний город, советуем отдельный визит по дороге.",
+      faq_q1: "Как добраться до бухты Фазелис?",
+      faq_a1: "До бухты Фазелис можно добраться двумя способами: по морю на ежедневной морской прогулке из марины Кемера или на автомобиле по трассе Кемер–Кумлуджа. Так как территория входит в национальный парк Олимпос-Бейдаглары, при входе в древний город действует музейная карта или входная плата. В нашем ежедневном туре мы приходим по морю и делаем остановку на 60 минут.",
+      faq_q2: "Безопасно ли купаться в бухте Фазелис?",
+      faq_a2: "Бухты защищены от ветра, дно обычно песчаное — здесь удобно купаться и заниматься снорклингом. На каждой лодке есть спасательные жилеты, а капитан показывает границы зоны купания по состоянию моря. Семьям с детьми рекомендуем купаться в жилетах.",
+      faq_q3: "Сколько нужно времени на древний город?",
+      faq_a3: "В нашем туре мы делаем остановку в Фазелисе на 60 минут — этого достаточно для купания, снорклинга и осмотра руин вдоль берега. Гостям, которые хотят обойти весь древний город, больше подойдёт отдельный визит по дороге.",
+      faq_q4: "В какие месяцы бухта Фазелис лучше всего?",
+      faq_a4: "С мая по октябрь температура моря и видимость наилучшие. Июль и август — самый многолюдный период; благодаря отправлению в 09:30 мы приходим в бухты до полуденной толпы. В апреле и ноябре море прохладнее, и маршрут обновляется по погодным условиям.",
+      cta_title: "Увидеть бухту Фазелис вживую",
+      cta_text: "Отправление из марины Кемера ежедневно в 09:30. Обед, фрукты и безлимитные безалкогольные напитки включены; спасательные жилеты и оборудование безопасности на борту. Забронируйте место за пару минут."
+    }
+  };
+
+  PAGES.cennet = {
+    tr: {
+      meta_title: "Cennet Koyu Kemer | Turkuaz Su, Plaj ve Öğle Molası",
+      meta_desc: "Cennet Koyu (Kemer): turkuaz su, kumlu plaj ve öğle yemeği molası. Kemer Marina'dan günlük tekne turuyla 90 dakika mola, yüzme ve snorkel.",
+      crumb: "Cennet Koyu",
+      eyebrow: "Kemer Marina'dan günlük tekne turu · 90 dk mola",
+      h1: "Cennet Koyu: Kemer'in Turkuaz Suyu ve Öğle Molası",
+      lead: "Adını hak eden turkuaz su, kumlu plaj ve sakin bir koy. Cennet Koyu günlük turumuzun en uzun molası: burada öğle yemeğini yiyor, yüzüyor ve güneşin tadını çıkarıyoruz.",
+      fact1_v: "90 dk", fact1_l: "Turumuzda en uzun mola",
+      fact2_v: "Öğle yemeği", fact2_l: "Izgara çupra ve meze dahil",
+      fact3_v: "Kumlu plaj", fact3_l: "Yüzmeye rahat giriş",
+      fact4_v: "Aile", fact4_l: "Çocuklu misafirler için uygun",
+      sec1_h2: "Cennet Koyu Nerede, Nasıl Gidilir?",
+      sec1_p1: "Cennet Koyu, Kemer koyları arasında turkuaz suyu ve kumlu plajıyla öne çıkan duraklardan biridir. Kemer çevresindeki koyların bir bölümüne kara yoluyla kolay ulaşılamaz; Cennet Koyu da bu koylardan biridir. Bu yüzden koyu görmenin en rahat yolu <strong>Kemer Marina'dan kalkan günlük tekne turlarıdır</strong>.",
+      sec1_p2: "Antalya'nın farklı bölgelerinde aynı adı taşıyan başka koylar da bulunur. Bu sayfa, Kemer Marina çıkışlı rotamızdaki Cennet Koyu'nu anlatır.",
+      sec2_h2: "Cennet Koyu'nda Ne Yapılır?",
+      sec2_li1: "<strong>Yüzme:</strong> Kumlu plaj, denize girişi kolaylaştırır; çocuklar ve yüzme konusunda kendine güvenmeyen misafirler için en rahat koylardan biridir.",
+      sec2_li2: "<strong>Öğle yemeği:</strong> Günlük turumuzun öğle molası burada verilir; yemek teknedeki misafirlere servis edilir.",
+      sec2_li3: "<strong>Snorkel:</strong> Berrak suda küçük balıklar ve kayalar görülebilir.",
+      sec2_li4: "<strong>Güneşlenme ve dinlenme:</strong> Geniş güvertede gölgelik altında dinlenme imkânı; koyun sakin yapısı öğle saatlerinde bile rahat bir mola sağlar.",
+      sec2_li5: "<strong>Fotoğraf:</strong> Turkuaz suyun kumla buluştuğu kıyı, günün en çok fotoğraflanan karelerini verir.",
+      sec3_h2: "Turumuzda Cennet Koyu: 90 Dakika",
+      sec3_p1: "Cennet Koyu, günlük turumuzun <strong>en uzun molası</strong>. Kemer Marina'dan 09:30'da kalkıyor, Phaselis'in ardından Cennet Koyu'na geliyoruz. Bu sürede öğle yemeği servis edilir: <strong>ızgara çupra balık, meze çeşitleri, salata ve meyve</strong>. Soft içecekler sınırsız; alkollü içecekler pakete dahil değildir, teknede bar bulunur.",
+      sec3_p2: "Yemekten sonra yüzme, snorkel ve güneşlenme için yaklaşık bir saat kalır. Turun tüm durakları ve tur programı için <a href=\"index.html#program\">tur programı ve dahil hizmetlere</a> bakabilirsiniz.",
+      sec4_h2: "Çocuklu Aileler İçin Cennet Koyu",
+      sec4_p1: "Kumlu plaj ve sakin su, Cennet Koyu'nu aileler için turumuzun en uygun durağı yapar. Her teknede can yeleği bulunur; misafirlerimizi çocuklarla yüzerken can yeleği kullanmaya teşvik ederiz. Teknede gölgelik alan, tatlı ikramı ve sıcak duş imkânı da mevcuttur.",
+      sec5_h2: "Yanınıza Almanız Gerekenler",
+      sec5_li1: "Mayo, havlu ve yedek kıyafet",
+      sec5_li2: "Güneş kremi, şapka ve güneş gözlüğü",
+      sec5_li3: "Çocuklar için kolluk veya deniz ayakkabısı",
+      sec5_li4: "Su geçirmez telefon kılıfı veya fotoğraf makinesi",
+      sec5_li5: "Havlu sonrası ıslak kıyafetler için poşet",
+      note: "<b>Not:</b> Öğle menüsü ve mola süresi hava koşullarına göre küçük farklılıklar gösterebilir. Alkollü içecekler pakete dahil değildir; teknede bar mevcuttur.",
+      stop: "Cennet Koyu, turumuzun en uzun molası: <strong>90 dakika</strong>. Bu sürede öğle yemeği servis edilir; ardından yüzme, snorkel ve güneşlenme için bolca zaman kalır.",
+      faq_q1: "Cennet Koyu'na nasıl gidilir?",
+      faq_a1: "Cennet Koyu'na en rahat ulaşım denizden sağlanır: Kemer Marina'dan kalkan günlük tekne turları koya doğrudan gelir. Kemer çevresindeki koyların bir bölümüne kara yoluyla kolay ulaşılamadığı için günlük yat turumuz koyu görmenin en pratik yoludur.",
+      faq_q2: "Öğle yemeği tura dahil mi?",
+      faq_a2: "Evet. Günlük turumuzda öğle yemeği, meze çeşitleri, meyve ve sınırsız soft içecek tura dahildir. Alkollü içecekler pakete dahil değildir; teknede bar bulunur.",
+      faq_q3: "Cennet Koyu ile Adrasan Cennet Koyu aynı yer mi?",
+      faq_a3: "Hayır, aynı yer değildir. Antalya'da 'Cennet Koyu' adını taşıyan birden fazla koy bulunur. Bu sayfa, Kemer Marina çıkışlı günlük tur rotamızdaki Cennet Koyu'nu anlatır.",
+      faq_q4: "Cennet Koyu çocuklarla gidilir mi?",
+      faq_a4: "Evet. Koyun kumlu plajı ve sakin suyu çocuklu aileler için uygundur. Teknede her misafir için can yeleği bulunur ve gölgelik alanda dinlenme imkânı vardır.",
+      cta_title: "Cennet Koyu'nda Öğle Molası Sizi Bekliyor",
+      cta_text: "Kemer Marina'dan her gün 09:30 kalkış. Izgara balık, meze çeşitleri, meyve ve sınırsız soft içecek dahil; can yeleği teknede hazır."
+    },
+    en: {
+      meta_title: "Paradise Bay Kemer | Turquoise Water, Beach and Lunch Stop",
+      meta_desc: "Paradise Bay (Cennet Koyu) in Kemer: turquoise water, sandy beach and our lunch stop. A 90-minute stop for swimming and snorkelling on our daily boat tour from Kemer Marina.",
+      crumb: "Paradise Bay",
+      eyebrow: "Daily boat tour from Kemer Marina · 90 min stop",
+      h1: "Paradise Bay: Kemer's Turquoise Water and Lunch Stop",
+      lead: "Turquoise water that lives up to its name, a sandy beach and a calm bay. Paradise Bay is the longest stop on our daily tour: here we have lunch, swim and enjoy the sun.",
+      fact1_v: "90 min", fact1_l: "Longest stop on our tour",
+      fact2_v: "Lunch", fact2_l: "Grilled sea bream and mezes included",
+      fact3_v: "Sandy beach", fact3_l: "Easy entry into the sea",
+      fact4_v: "Family", fact4_l: "Suitable for guests with children",
+      sec1_h2: "Where Is Paradise Bay and How Do You Get There?",
+      sec1_p1: "Paradise Bay stands out among the bays of Kemer with its turquoise water and sandy beach. Some bays around Kemer cannot easily be reached by road, and Paradise Bay is one of them. That is why the easiest way to see the bay is <strong>on a daily boat tour departing from Kemer Marina</strong>.",
+      sec1_p2: "There are other bays with the same name in different parts of Antalya. This page describes the Paradise Bay on our route from Kemer Marina.",
+      sec2_h2: "What Do You Do in Paradise Bay?",
+      sec2_li1: "<strong>Swimming:</strong> The sandy beach makes entering the sea easy; it is one of the most comfortable bays for children and for guests who are not confident swimmers.",
+      sec2_li2: "<strong>Lunch:</strong> The lunch stop of our daily tour is here; the meal is served to the guests on board.",
+      sec2_li3: "<strong>Snorkelling:</strong> Small fish and rocks can be seen in the clear water.",
+      sec2_li4: "<strong>Sunbathing and relaxing:</strong> Space to relax in the shade on the wide deck; the calm nature of the bay makes it comfortable even at midday.",
+      sec2_li5: "<strong>Photography:</strong> The shore where the turquoise water meets the sand gives the most photographed frames of the day.",
+      sec3_h2: "Paradise Bay on Our Tour: 90 Minutes",
+      sec3_p1: "Paradise Bay is the <strong>longest stop</strong> of our daily tour. We depart from Kemer Marina at 09:30 and reach Paradise Bay after Phaselis. Lunch is served during this stop: <strong>grilled sea bream, a selection of mezes, salad and fruit</strong>. Soft drinks are unlimited; alcoholic drinks are not included in the package, but there is a bar on board.",
+      sec3_p2: "After the meal about an hour remains for swimming, snorkelling and sunbathing. For all the stops and the tour programme see <a href=\"index.html#program\">the tour programme and what is included</a>.",
+      sec4_h2: "Paradise Bay for Families with Children",
+      sec4_p1: "The sandy beach and calm water make Paradise Bay the most suitable stop of our tour for families. Every boat carries life jackets; we encourage our guests to use them when swimming with children. Shaded areas, a dessert service and a hot shower are also available on board.",
+      sec5_h2: "What to Bring With You",
+      sec5_li1: "Swimsuit, towel and spare clothes",
+      sec5_li2: "Sunscreen, hat and sunglasses",
+      sec5_li3: "Armbands or sea shoes for children",
+      sec5_li4: "Waterproof phone case or camera",
+      sec5_li5: "A bag for wet clothes after the towel",
+      note: "<b>Note:</b> The lunch menu and the stop duration may vary slightly depending on weather conditions. Alcoholic drinks are not included in the package; there is a bar on board.",
+      stop: "Paradise Bay is the longest stop of our tour: <strong>90 minutes</strong>. Lunch is served during this time and plenty of time remains afterwards for swimming, snorkelling and sunbathing.",
+      faq_q1: "How do you get to Paradise Bay?",
+      faq_a1: "The easiest way to reach Paradise Bay is by sea: daily boat tours departing from Kemer Marina come directly to the bay. Because some bays around Kemer cannot easily be reached by road, our daily yacht tour is the most practical way to see the bay.",
+      faq_q2: "Is lunch included in the tour?",
+      faq_a2: "Yes. Lunch, a selection of mezes, fruit and unlimited soft drinks are included in our daily tour. Alcoholic drinks are not included in the package; there is a bar on board.",
+      faq_q3: "Is Paradise Bay the same place as Adrasan Paradise Bay?",
+      faq_a3: "No, it is not the same place. There is more than one bay called Cennet Koyu in Antalya. This page describes the Paradise Bay on our daily route from Kemer Marina.",
+      faq_q4: "Can you visit Paradise Bay with children?",
+      faq_a4: "Yes. The sandy beach and calm water make the bay suitable for families with children. Every guest has a life jacket on board and there is a shaded area to relax in.",
+      cta_title: "Your Lunch Stop at Paradise Bay Is Waiting",
+      cta_text: "Departure from Kemer Marina every day at 09:30. Grilled fish, a selection of mezes, fruit and unlimited soft drinks included; life jackets ready on board."
+    },
+    ru: {
+      meta_title: "Райская бухта Кемер | Бирюзовая вода, пляж и обед",
+      meta_desc: "Райская бухта (Cennet Koyu) в Кемере: бирюзовая вода, песчаный пляж и остановка на обед. 90 минут для купания и снорклинга на нашей ежедневной морской прогулке из марины Кемера.",
+      crumb: "Райская бухта",
+      eyebrow: "Ежедневная морская прогулка из марины Кемера · остановка 90 мин",
+      h1: "Райская бухта: бирюзовая вода и обед в Кемере",
+      lead: "Бирюзовая вода, оправдывающая своё название, песчаный пляж и спокойная бухта. Райская бухта — самая длинная остановка нашей ежедневной прогулки: здесь мы обедаем, купаемся и наслаждаемся солнцем.",
+      fact1_v: "90 мин", fact1_l: "Самая длинная остановка тура",
+      fact2_v: "Обед", fact2_l: "Дорада на гриле и мезе включены",
+      fact3_v: "Песчаный пляж", fact3_l: "Удобный вход в море",
+      fact4_v: "Семья", fact4_l: "Подходит для гостей с детьми",
+      sec1_h2: "Где находится Райская бухта и как туда попасть?",
+      sec1_p1: "Райская бухта выделяется среди бухт Кемера бирюзовой водой и песчаным пляжем. До части бухт вокруг Кемера сложно добраться по дороге, и Райская бухта — одна из них. Поэтому самый удобный способ увидеть бухту — <strong>ежедневная морская прогулка из марины Кемера</strong>.",
+      sec1_p2: "В разных районах Анталии есть и другие бухты с таким же названием. Эта страница описывает Райскую бухту на нашем маршруте из марины Кемера.",
+      sec2_h2: "Что делают в Райской бухте?",
+      sec2_li1: "<strong>Купание:</strong> песчаный пляж облегчает вход в море; это одна из самых удобных бухт для детей и для гостей, которые не уверены в своих силах в воде.",
+      sec2_li2: "<strong>Обед:</strong> здесь проходит обеденная остановка нашей ежедневной прогулки; еду подают гостям на борту.",
+      sec2_li3: "<strong>Снорклинг:</strong> в прозрачной воде можно увидеть небольших рыб и камни.",
+      sec2_li4: "<strong>Загар и отдых:</strong> на просторной палубе есть место для отдыха в тени; спокойный характер бухты делает остановку комфортной даже в полдень.",
+      sec2_li5: "<strong>Фотографии:</strong> берег, где бирюзовая вода встречается с песком, даёт самые фотографируемые кадры дня.",
+      sec3_h2: "Райская бухта в нашем туре: 90 минут",
+      sec3_p1: "Райская бухта — <strong>самая длинная остановка</strong> нашей ежедневной прогулки. Мы отправляемся из марины Кемера в 09:30 и приходим в Райскую бухту после Фазелиса. В это время подают обед: <strong>дорада на гриле, ассорти мезе, салат и фрукты</strong>. Безалкогольные напитки безлимитные; алкоголь в пакет не входит, на борту есть бар.",
+      sec3_p2: "После еды остаётся около часа на купание, снорклинг и загар. Все остановки и программу тура можно посмотреть здесь: <a href=\"index.html#program\">программа тура и включённые услуги</a>.",
+      sec4_h2: "Райская бухта для семей с детьми",
+      sec4_p1: "Песчаный пляж и спокойная вода делают Райскую бухту самой подходящей остановкой нашего тура для семей. На каждой лодке есть спасательные жилеты; мы рекомендуем гостям использовать их при купании с детьми. На борту также есть тенистая зона, десерт и горячий душ.",
+      sec5_h2: "Что взять с собой",
+      sec5_li1: "Купальник, полотенце и сменную одежду",
+      sec5_li2: "Солнцезащитный крем, панаму и очки",
+      sec5_li3: "Нарукавники или обувь для моря для детей",
+      sec5_li4: "Водонепроницаемый чехол для телефона или фотоаппарат",
+      sec5_li5: "Пакет для мокрой одежды после полотенца",
+      note: "<b>Важно:</b> обеденное меню и длительность остановки могут немного меняться в зависимости от погодных условий. Алкогольные напитки в пакет не входят; на борту есть бар.",
+      stop: "Райская бухта — самая длинная остановка нашего тура: <strong>90 минут</strong>. В это время подают обед, а затем остаётся много времени на купание, снорклинг и загар.",
+      faq_q1: "Как добраться до Райской бухты?",
+      faq_a1: "Удобнее всего добираться до Райской бухты по морю: ежедневные морские прогулки из марины Кемера приходят прямо в бухту. Так как до части бухт вокруг Кемера сложно добраться по дороге, наша ежедневная прогулка — самый практичный способ увидеть бухту.",
+      faq_q2: "Обед включён в тур?",
+      faq_a2: "Да. В нашу ежедневную прогулку включены обед, ассорти мезе, фрукты и безлимитные безалкогольные напитки. Алкогольные напитки в пакет не входят; на борту есть бар.",
+      faq_q3: "Райская бухта и Райская бухта в Адрасане — одно и то же место?",
+      faq_a3: "Нет, это не одно и то же место. В Анталии есть несколько бухт с названием Cennet Koyu. Эта страница описывает Райскую бухту на нашем ежедневном маршруте из марины Кемера.",
+      faq_q4: "Можно ли поехать в Райскую бухту с детьми?",
+      faq_a4: "Да. Песчаный пляж и спокойная вода подходят для семей с детьми. На борту для каждого гостя есть спасательный жилет и тенистая зона для отдыха.",
+      cta_title: "Обеденная остановка в Райской бухте ждёт вас",
+      cta_text: "Отправление из марины Кемера ежедневно в 09:30. Рыба на гриле, ассорти мезе, фрукты и безлимитные безалкогольные напитки включены; спасательные жилеты на борту."
+    }
+  };
+
+  PAGES.akvaryum = {
+    tr: {
+      meta_title: "Akvaryum Koyu Kemer | Snorkel ve Yüzme Molası Rehberi",
+      meta_desc: "Akvaryum Koyu (Kemer): berrak su, balık sürüleri ve yüksek su altı görüş mesafesi. Kemer Marina'dan günlük tekne turuyla 45 dakika snorkel molası.",
+      crumb: "Akvaryum Koyu",
+      eyebrow: "Kemer Marina'dan günlük tekne turu · 45 dk snorkel molası",
+      h1: "Akvaryum Koyu: Kemer'in Doğal Akvaryumu",
+      lead: "Suyun içine girdiğinizde sizi balık sürüleri karşılıyor. Akvaryum Koyu, adını berrak suyundan ve yüksek su altı görüş mesafesinden alıyor; günlük turumuzun snorkel durağı burası.",
+      fact1_v: "45 dk", fact1_l: "Turumuzda snorkel molası",
+      fact2_v: "Snorkel", fact2_l: "Maske ve şnorkel molası",
+      fact3_v: "Berrak su", fact3_l: "Yüksek görüş mesafesi",
+      fact4_v: "Balıklar", fact4_l: "Kayalar çevresinde sürüler",
+      sec1_h2: "Akvaryum Koyu Nerede, Nasıl Gidilir?",
+      sec1_p1: "Akvaryum Koyu, Kemer Marina çıkışlı günlük tur rotamızdaki koylardan biridir ve adını suyunun berraklığından alır. Koya ulaşım ağırlıklı olarak <strong>denizden</strong> sağlanır; günlük tekne turlarımız koyu programın bir parçası olarak ziyaret eder.",
+      sec1_p2: "Aynı gün içinde <a href=\"phaselis-koyu.html\">Phaselis Koyu</a>, <a href=\"cennet-koyu.html\">Cennet Koyu</a> ve <a href=\"korsan-magarasi.html\">Korsan Mağarası</a> duraklarını da görüyorsunuz.",
+      sec2_h2: "Akvaryum Koyu'nda Ne Yapılır?",
+      sec2_li1: "<strong>Snorkel:</strong> Koyun en bilinen özelliği su altı görüş mesafesidir. Maske ve şnorkelle yüzeyde ilerlerken taş ve kayaların çevresinde küçük balık sürüleri görülür.",
+      sec2_li2: "<strong>Yüzme:</strong> Berrak ve sakin su, yüzme molası için idealdir.",
+      sec2_li3: "<strong>Su altı fotoğrafçılığı:</strong> Görüş mesafesi yüksek olduğu için telefon veya aksiyon kamerasıyla net görüntüler alınabilir.",
+      sec2_li4: "<strong>Güneşlenme:</strong> Molada güvertede güneşlenip dinlenebilir, serinlemek için yeniden suya girebilirsiniz.",
+      sec3_h2: "Snorkel İçin Pratik İpuçları",
+      sec3_li1: "Maskenizi takmadan önce camına az miktarda deniz suyu sürüp çalkalayın; buğulanmayı azaltır.",
+      sec3_li2: "Yavaş ve sakin hareket edin; ani hareketler balıkları ürkütür.",
+      sec3_li3: "Balıkları elle tutmaya veya beslemeye çalışmayın; doğal davranışlarını bozar.",
+      sec3_li4: "Güneş kremi kullanacaksanız deniz dostu ürünleri tercih edin.",
+      sec3_li5: "Kayalık zeminde ayak kesilmesini önlemek için deniz ayakkabısı giyin.",
+      sec4_h2: "Turumuzda Akvaryum Koyu",
+      sec4_p1: "Günlük turumuzda Akvaryum Koyu'nda <strong>45 dakika</strong> mola veriyoruz. Bu süre yüzme ve snorkel için ayrılmıştır; can yeleği, güvenlik ekipmanı ve soft içecek teknede hazırdır. Programın tümü için <a href=\"index.html#program\">tur programı ve dahil hizmetlere</a> göz atabilirsiniz.",
+      sec5_h2: "Yanınıza Almanız Gerekenler",
+      sec5_li1: "Maske ve şnorkel (kendi ekipmanınız en iyi uyumu sağlar)",
+      sec5_li2: "Deniz ayakkabısı veya su geçiren ayakkabı",
+      sec5_li3: "Havlu, mayo ve yedek kıyafet",
+      sec5_li4: "Su geçirmez telefon kılıfı veya aksiyon kamerası",
+      sec5_li5: "Güneş kremi ve şapka",
+      note: "<b>Not:</b> Su altı görüş mesafesi deniz koşullarına göre günlük olarak değişebilir. Koya mola verilmesi ve snorkel alanının sınırları kaptanımızın güvenlik değerlendirmesine bağlıdır.",
+      stop: "Akvaryum Koyu'nda <strong>45 dakika</strong> mola veriyoruz. Bu süre yüzme, snorkel ve su altı fotoğrafçılığı için ayrılmıştır.",
+      faq_q1: "Akvaryum Koyu'nda snorkel yapılır mı?",
+      faq_a1: "Evet. Akvaryum Koyu günlük turumuzun snorkel durağıdır ve burada 45 dakika mola veriyoruz. Berrak su ve kayaların çevresindeki balık sürüleri, yüzeyden snorkel yapmak için uygundur.",
+      faq_q2: "Maske ve şnorkel getirmeli miyim?",
+      faq_a2: "Kendi maske ve şnorkelinizi getirmenizi öneririz; kişisel ekipman en iyi uyumu sağlar. Ekipman temini ve mevcut durumu rezervasyon sırasında bize sorabilirsiniz.",
+      faq_q3: "Akvaryum Koyu'nda balık görülür mü?",
+      faq_a3: "Kayaların ve taşların çevresinde küçük balık sürüleri görülür. Su altı görüş mesafesi deniz koşullarına bağlı olarak günlük değişebilir; berrak günlerde görüş mesafesi belirgin şekilde artar.",
+      faq_q4: "Yüzme bilmiyorum, yine de suya girebilir miyim?",
+      faq_a4: "Can yeleği giyerek kıyıya yakın bölümde suda kalabilirsiniz. Her teknede can yeleği bulunur ve kaptanımız güvenli yüzme alanının sınırlarını gösterir. Yüzme bilmeyen misafirlerimizin can yeleği kullanmasını özellikle rica ederiz.",
+      cta_title: "Akvaryum Koyu'nda Su Altını Keşfedin",
+      cta_text: "Kemer Marina'dan her gün 09:30 kalkış. Öğle yemeği, meyve ve sınırsız soft içecek dahil; snorkel molası programın parçası. Yerinizi bugünden ayırtın."
+    },
+    en: {
+      meta_title: "Aquarium Bay Kemer | Snorkelling and Swimming Stop Guide",
+      meta_desc: "Aquarium Bay (Akvaryum Koyu) in Kemer: clear water, schools of fish and excellent underwater visibility. A 45-minute snorkelling stop on our daily boat tour from Kemer Marina.",
+      crumb: "Aquarium Bay",
+      eyebrow: "Daily boat tour from Kemer Marina · 45 min snorkelling stop",
+      h1: "Aquarium Bay: Kemer's Natural Aquarium",
+      lead: "When you enter the water, schools of fish greet you. Aquarium Bay takes its name from the clarity of its water and its high underwater visibility; it is the snorkelling stop of our daily tour.",
+      fact1_v: "45 min", fact1_l: "Snorkelling stop on our tour",
+      fact2_v: "Snorkelling", fact2_l: "Mask and snorkel stop",
+      fact3_v: "Clear water", fact3_l: "High underwater visibility",
+      fact4_v: "Fish", fact4_l: "Schools around the rocks",
+      sec1_h2: "Where Is Aquarium Bay and How Do You Get There?",
+      sec1_p1: "Aquarium Bay is one of the bays on our daily route departing from Kemer Marina and takes its name from the clarity of its water. The bay is reached mainly <strong>by sea</strong>; our daily boat tours visit it as part of the programme.",
+      sec1_p2: "On the same day you also visit <a href=\"phaselis-koyu.html\">Phaselis Bay</a>, <a href=\"cennet-koyu.html\">Paradise Bay</a> and <a href=\"korsan-magarasi.html\">the Pirate Cave</a>.",
+      sec2_h2: "What Do You Do in Aquarium Bay?",
+      sec2_li1: "<strong>Snorkelling:</strong> The bay's best-known feature is its underwater visibility. As you swim along the surface with a mask and snorkel you see small schools of fish around the stones and rocks.",
+      sec2_li2: "<strong>Swimming:</strong> The clear and calm water is ideal for a swimming stop.",
+      sec2_li3: "<strong>Underwater photography:</strong> Because visibility is high you can take sharp images with a phone or action camera.",
+      sec2_li4: "<strong>Sunbathing:</strong> During the stop you can sunbathe and relax on deck, or jump back in the water to cool off.",
+      sec3_h2: "Practical Snorkelling Tips",
+      sec3_li1: "Before putting your mask on, rinse the lens with a little sea water; it reduces fogging.",
+      sec3_li2: "Move slowly and calmly; sudden movements scare the fish away.",
+      sec3_li3: "Do not try to touch or feed the fish; it disturbs their natural behaviour.",
+      sec3_li4: "If you use sunscreen, choose reef-friendly products.",
+      sec3_li5: "Wear sea shoes to avoid cutting your feet on the rocky bottom.",
+      sec4_h2: "Aquarium Bay on Our Tour",
+      sec4_p1: "On our daily tour we stop for <strong>45 minutes</strong> at Aquarium Bay. This time is reserved for swimming and snorkelling; life jackets, safety equipment and soft drinks are ready on board. You can see the full programme in <a href=\"index.html#program\">the tour programme and what is included</a>.",
+      sec5_h2: "What to Bring With You",
+      sec5_li1: "Mask and snorkel (your own gear fits best)",
+      sec5_li2: "Sea shoes or water shoes",
+      sec5_li3: "Towel, swimsuit and spare clothes",
+      sec5_li4: "Waterproof phone case or action camera",
+      sec5_li5: "Sunscreen and hat",
+      note: "<b>Note:</b> Underwater visibility can change from day to day depending on sea conditions. The stop in the bay and the limits of the snorkelling area depend on our captain's safety assessment.",
+      stop: "We stop for <strong>45 minutes</strong> at Aquarium Bay. This time is reserved for swimming, snorkelling and underwater photography.",
+      faq_q1: "Can you snorkel in Aquarium Bay?",
+      faq_a1: "Yes. Aquarium Bay is the snorkelling stop of our daily tour and we stop here for 45 minutes. The clear water and the schools of fish around the rocks make it suitable for snorkelling from the surface.",
+      faq_q2: "Should I bring my own mask and snorkel?",
+      faq_a2: "We recommend bringing your own mask and snorkel, as personal equipment fits best. You can ask us about equipment supply and availability during booking.",
+      faq_q3: "Can you see fish in Aquarium Bay?",
+      faq_a3: "Small schools of fish can be seen around the rocks and stones. Underwater visibility can change daily depending on sea conditions; on clear days visibility increases noticeably.",
+      faq_q4: "I cannot swim — can I still get in the water?",
+      faq_a4: "You can stay in the water close to the shore wearing a life jacket. Every boat carries life jackets and our captain shows the limits of the safe swimming area. We especially ask our non-swimming guests to wear a life jacket.",
+      cta_title: "Discover the Underwater World of Aquarium Bay",
+      cta_text: "Departure from Kemer Marina every day at 09:30. Lunch, fruit and unlimited soft drinks included; the snorkelling stop is part of the programme. Reserve your place today."
+    },
+    ru: {
+      meta_title: "Аквариум бухта Кемер | Гид по снорклингу и купанию",
+      meta_desc: "Аквариум бухта (Akvaryum Koyu) в Кемере: прозрачная вода, стаи рыб и отличная видимость под водой. Остановка 45 минут для снорклинга на нашей ежедневной морской прогулке из марины Кемера.",
+      crumb: "Аквариум бухта",
+      eyebrow: "Ежедневная морская прогулка из марины Кемера · снорклинг 45 мин",
+      h1: "Аквариум бухта: природный аквариум Кемера",
+      lead: "Когда вы входите в воду, вас встречают стаи рыб. Аквариум бухта получила название за прозрачность воды и отличную видимость под водой; это остановка для снорклинга на нашей ежедневной прогулке.",
+      fact1_v: "45 мин", fact1_l: "Снорклинг-остановка нашего тура",
+      fact2_v: "Снорклинг", fact2_l: "Остановка с маской и трубкой",
+      fact3_v: "Прозрачная вода", fact3_l: "Высокая видимость под водой",
+      fact4_v: "Рыбы", fact4_l: "Стаи у скал",
+      sec1_h2: "Где находится Аквариум бухта и как туда попасть?",
+      sec1_p1: "Аквариум бухта — одна из бухт нашего ежедневного маршрута из марины Кемера; название она получила за прозрачность воды. Добраться до бухты можно в основном <strong>по морю</strong>; наши ежедневные морские прогулки посещают её в рамках программы.",
+      sec1_p2: "В тот же день вы также увидите <a href=\"phaselis-koyu.html\">бухту Фазелис</a>, <a href=\"cennet-koyu.html\">Райскую бухту</a> и <a href=\"korsan-magarasi.html\">Пиратскую пещеру</a>.",
+      sec2_h2: "Что делают в Аквариум бухте?",
+      sec2_li1: "<strong>Снорклинг:</strong> главная особенность бухты — видимость под водой. Плывя по поверхности с маской и трубкой, вы видите небольшие стаи рыб у камней и скал.",
+      sec2_li2: "<strong>Купание:</strong> прозрачная и спокойная вода идеальна для купания.",
+      sec2_li3: "<strong>Подводная съёмка:</strong> благодаря высокой видимости можно получить чёткие кадры на телефон или экшн-камеру.",
+      sec2_li4: "<strong>Загар:</strong> во время остановки можно загорать и отдыхать на палубе, а чтобы освежиться — снова зайти в воду.",
+      sec3_h2: "Практические советы для снорклинга",
+      sec3_li1: "Перед тем как надеть маску, ополосните стекло небольшим количеством морской воды — это уменьшит запотевание.",
+      sec3_li2: "Двигайтесь медленно и спокойно: резкие движения пугают рыб.",
+      sec3_li3: "Не пытайтесь трогать или кормить рыб — это нарушает их естественное поведение.",
+      sec3_li4: "Если используете солнцезащитный крем, выбирайте средства, безопасные для моря.",
+      sec3_li5: "Надевайте обувь для моря, чтобы не порезать ноги о каменистое дно.",
+      sec4_h2: "Аквариум бухта в нашем туре",
+      sec4_p1: "В нашей ежедневной прогулке мы делаем остановку в Аквариум бухте на <strong>45 минут</strong>. Это время отведено для купания и снорклинга; спасательные жилеты, оборудование безопасности и безалкогольные напитки есть на борту. Полную программу можно посмотреть здесь: <a href=\"index.html#program\">программа тура и включённые услуги</a>.",
+      sec5_h2: "Что взять с собой",
+      sec5_li1: "Маску и трубку (своё снаряжение сидит лучше всего)",
+      sec5_li2: "Обувь для моря или воду",
+      sec5_li3: "Полотенце, купальник и сменную одежду",
+      sec5_li4: "Водонепроницаемый чехол для телефона или экшн-камеру",
+      sec5_li5: "Солнцезащитный крем и панаму",
+      note: "<b>Важно:</b> видимость под водой может меняться ежедневно в зависимости от состояния моря. Остановка в бухте и границы зоны снорклинга зависят от оценки безопасности нашим капитаном.",
+      stop: "В Аквариум бухте мы делаем остановку на <strong>45 минут</strong>. Это время отведено для купания, снорклинга и подводной съёмки.",
+      faq_q1: "В Аквариум бухте можно заниматься снорклингом?",
+      faq_a1: "Да. Аквариум бухта — остановка для снорклинга в нашей ежедневной прогулке, здесь мы делаем паузу на 45 минут. Прозрачная вода и стаи рыб у скал подходят для снорклинга с поверхности.",
+      faq_q2: "Нужно ли привозить маску и трубку с собой?",
+      faq_a2: "Рекомендуем взять свои маску и трубку — личное снаряжение сидит лучше. О наличии и предоставлении снаряжения можно спросить нас при бронировании.",
+      faq_q3: "В Аквариум бухте видно рыб?",
+      faq_a3: "Вокруг скал и камней видны небольшие стаи рыб. Видимость под водой может меняться ежедневно в зависимости от состояния моря; в ясные дни она заметно увеличивается.",
+      faq_q4: "Я не умею плавать — можно ли войти в воду?",
+      faq_a4: "Вы можете находиться в воде недалеко от берега в спасательном жилете. На каждой лодке есть жилеты, а капитан показывает границы безопасной зоны купания. Гостей, которые не умеют плавать, особенно просим пользоваться жилетом.",
+      cta_title: "Откройте подводный мир Аквариум бухты",
+      cta_text: "Отправление из марины Кемера ежедневно в 09:30. Обед, фрукты и безлимитные безалкогольные напитки включены; остановка для снорклинга — часть программы. Забронируйте место сегодня."
+    }
+  };
+
+  PAGES.korsan = {
+    tr: {
+      meta_title: "Korsan Mağarası Kemer | Tekneyle Deniz Mağarası Turu",
+      meta_desc: "Kemer Korsan Mağarası: kayalara gizlenmiş doğal deniz mağarası. Tekneyle yaklaşma, serin suda yüzme ve fotoğraf durağı. Kemer Marina çıkışlı günlük tekne turumuzun rotasında.",
+      crumb: "Korsan Mağarası",
+      eyebrow: "Kemer Marina'dan günlük tekne turu · 30 dk mola",
+      h1: "Kemer Korsan Mağarası: Denizin Gizli Geçidi",
+      lead: "Kayalıkların içine gizlenmiş doğal bir deniz mağarası. Teknemiz mağaranın ağzına kontrollü şekilde yaklaşır; mola sırasında serin suda yüzüyor ve turkuaz ışığın fotoğrafını çekiyoruz.",
+      fact1_v: "30 dk",
+      fact1_l: "Turumuzda mağara molası",
+      fact2_v: "Doğal mağara",
+      fact2_l: "Kayalara gizlenmiş geçit",
+      fact3_v: "Kayalık geçit",
+      fact3_l: "Tekneyle yaklaşma",
+      fact4_v: "Fotoğraf",
+      fact4_l: "Turkuaz ışık kareleri",
+      sec1_h2: "Korsan Mağarası Nerede, Nasıl Gidilir?",
+      sec1_p1: "Korsan Mağarası, Kemer kıyılarındaki kayalıkların içine gizlenmiş doğal bir deniz mağarasıdır. Kıyı şeridi dik kayalarla çevrili olduğu için mağaraya kara yoluyla ulaşılamaz; en rahat yol <strong>Kemer Marina'dan kalkan tekne turlarıdır</strong>.",
+      sec1_p2: "Mağara, günlük rotamızın son duraklarından biridir. Aynı gün <a href=\"phaselis-koyu.html\">Phaselis Koyu</a>, <a href=\"cennet-koyu.html\">Cennet Koyu</a> ve <a href=\"akvaryum-koyu.html\">Akvaryum Koyu</a> duraklarını da görüyorsunuz.",
+      sec2_h2: "Mağarada Ne Yapılır?",
+      sec2_li1: "<strong>Tekneyle yaklaşma:</strong> Deniz sakin olduğunda teknemiz mağaranın ağzına kontrollü şekilde yaklaşır; kayaların oluşturduğu doğal geçidi güvenli mesafeden görürsünüz. Tekne mağaranın içine girmez.",
+      sec2_li2: "<strong>Yüzme:</strong> Koşullar uygun olduğunda mağaranın çevresindeki serin suda kısa bir yüzme molası veriyoruz.",
+      sec2_li3: "<strong>Fotoğraf:</strong> Mağara ağzından içeri süzülen ışık, turkuaz su ve koyu kayalar güçlü bir kontrast oluşturur.",
+      sec2_li4: "<strong>Serinleme:</strong> Yaz sıcağında mağaranın gölgesi ve kayaların serinliği günün en ferahlatıcı molalarından biridir.",
+      sec3_h2: "Adı Nereden Geliyor?",
+      sec3_p1: "Bölgedeki koylar ve deniz mağaraları, geçmişte denizciler ve korsanlar için doğal sığınak olarak anlatılır. Kemer kıyılarındaki bu mağara da <strong>Korsan Mağarası</strong> adıyla aynı anlatının parçasıdır. Bugün bölge, tekne turlarının en çok fotoğraflanan duraklarından biridir.",
+      sec4_h2: "Turumuzda Korsan Mağarası",
+      sec4_p1: "Turumuzda Korsan Mağarası'nda <strong>30 dakika</strong> mola veriyoruz. Yaklaşma ve yüzme kararı her zaman kaptanımıza aittir; deniz durumu uygun değilse tekne mağaranın ağzına sokulmaz ve rota güvenli alternatif koylarla güncellenir. Program ve dahil hizmetler için <a href=\"index.html#program\">tur programı ve dahil hizmetlere</a> bakabilirsiniz.",
+      sec5_h2: "Güvenlik ve Pratik Bilgiler",
+      sec5_li1: "Kayalık zemin ve ıslak yüzeyler için deniz ayakkabısı giyin.",
+      sec5_li2: "Tekne hareket hâlindeyken kaptanın ve mürettebatın talimatlarına uyun.",
+      sec5_li3: "Telefon ve fotoğraf makinesi için su geçirmez kılıf kullanın.",
+      sec5_li4: "Yüzme yalnızca kaptanın gösterdiği alanda yapılır.",
+      sec5_li5: "Çocuklar için can yeleği teknede hazırdır; kullanılmasını öneririz.",
+      note: "<b>Not:</b> Mağaraya yaklaşma ve yüzme molası, deniz ve hava koşullarına göre kaptanımızın kararına bağlıdır. Güvenlik nedeniyle uygun olmayan günlerde rota alternatif koylarla güncellenir.",
+      stop: "Korsan Mağarası'nda <strong>30 dakika</strong> mola veriyoruz: mağaranın ağzına tekneyle yaklaşma, kısa yüzme molası ve fotoğraf çekimi.",
+      faq_q1: "Tekne mağaranın içine giriyor mu?",
+      faq_a1: "Hayır. Mağaranın kayalık ağzı teknelerin geçişi için uygun değildir; teknemiz mağaranın ağzına güvenli mesafeden yaklaşır ve mola sırasında kıyıya yakın bölümde yüzme imkânı sunulur. Yaklaşma ve yüzme kararı, deniz durumu uygun olduğunda kaptanımız tarafından verilir.",
+      faq_q2: "Deniz dalgalıysa ne olur?",
+      faq_a2: "Mağara molası güvenlik nedeniyle iptal edilebilir. Böyle günlerde rotamız alternatif koylarla güncellenir; Kemer Marina'dan kalkış saati ve tur süresi değişmez. Hava ve deniz durumunu tur sabahı bizden öğrenebilirsiniz.",
+      faq_q3: "Mağarada yüzülebilir mi?",
+      faq_a3: "Koşullar uygun olduğunda kaptanımızın gösterdiği alanda kısa bir yüzme molası veriyoruz. Can yeleği kullanmanızı ve kayalık zeminde dikkatli olmanızı öneririz.",
+      faq_q4: "Korsan Mağarası neden bu isimle anılıyor?",
+      faq_a4: "Bölgedeki deniz mağaraları geçmişte denizcilerin ve korsanların sığınağı olarak anlatılır. Bu anlatı, mağaranın adının kaynağı olarak kabul edilir.",
+      cta_title: "Korsan Mağarası'nı Tekneyle Görün",
+      cta_text: "Kemer Marina'dan her gün 09:30 kalkış. Phaselis, Cennet Koyu, Akvaryum Koyu ve Korsan Mağarası aynı günün programında; öğle yemeği ve sınırsız soft içecek dahil."
+    },
+    en: {
+      meta_title: "Kemer Pirate Cave | Boat Trip to a Natural Sea Cave",
+      meta_desc: "Kemer Pirate Cave: a natural sea cave hidden in the rocks. The boat approaches the cave mouth; swim in the cool water and take photos. A stop on our daily Kemer boat tour from Kemer Marina.",
+      crumb: "Pirate Cave",
+      eyebrow: "Daily boat tour from Kemer Marina · 30 min stop",
+      h1: "Kemer Pirate Cave: The Hidden Passage of the Sea",
+      lead: "A natural sea cave hidden inside the rocks. Our boat approaches the cave mouth in a controlled way; during the stop you swim in the cool water and photograph the turquoise light.",
+      fact1_v: "30 min",
+      fact1_l: "Cave stop on our tour",
+      fact2_v: "Natural cave",
+      fact2_l: "Passage hidden in the rocks",
+      fact3_v: "Rocky inlet",
+      fact3_l: "Approached by boat",
+      fact4_v: "Photo",
+      fact4_l: "Turquoise light frames",
+      sec1_h2: "Where Is the Pirate Cave and How Do You Get There?",
+      sec1_p1: "The Pirate Cave is a natural sea cave hidden inside the rocks along the Kemer coast. The shoreline is surrounded by steep cliffs, so the cave cannot be reached by road; the easiest way is <strong>on a boat tour departing from Kemer Marina</strong>.",
+      sec1_p2: "The cave is one of the last stops on our daily route. On the same day you also visit <a href=\"phaselis-koyu.html\">Phaselis Bay</a>, <a href=\"cennet-koyu.html\">Paradise Bay</a> and <a href=\"akvaryum-koyu.html\">Aquarium Bay</a>.",
+      sec2_h2: "What Do You Do at the Cave?",
+      sec2_li1: "<strong>Approach by boat:</strong> When the sea is calm our boat comes up to the cave mouth in a controlled way; you see the natural passage formed by the rocks from a safe distance. The boat does not enter the cave.",
+      sec2_li2: "<strong>Swimming:</strong> When conditions allow we stop for a short swim in the cool water around the cave.",
+      sec2_li3: "<strong>Photography:</strong> The light filtering into the cave mouth, the turquoise water and the dark rocks create a strong contrast.",
+      sec2_li4: "<strong>Cooling off:</strong> In the summer heat the cave's shadow and the cool rocks make this one of the most refreshing stops of the day.",
+      sec3_h2: "Where Does the Name Come From?",
+      sec3_p1: "The bays and sea caves of the region are told as natural shelters once used by sailors and pirates. This cave on the Kemer coast is part of the same story, which is why it is called the <strong>Pirate Cave</strong>. Today the area is one of the most photographed stops on boat tours.",
+      sec4_h2: "The Pirate Cave on Our Tour",
+      sec4_p1: "We stop for <strong>30 minutes</strong> at the Pirate Cave. The decision to approach and swim always belongs to our captain; if sea conditions are not suitable the boat does not come close to the cave mouth and the route is updated with safe alternative bays. See <a href=\"index.html#program\">the tour programme and what is included</a>.",
+      sec5_h2: "Safety and Practical Tips",
+      sec5_li1: "Wear sea shoes for the rocky ground and wet surfaces.",
+      sec5_li2: "Follow the instructions of the captain and crew while the boat is moving.",
+      sec5_li3: "Use a waterproof case for your phone and camera.",
+      sec5_li4: "Swimming takes place only in the area shown by the captain.",
+      sec5_li5: "Life jackets for children are ready on board; we recommend using them.",
+      note: "<b>Note:</b> Approaching the cave and the swimming stop depend on sea and weather conditions and on our captain's decision. On days when conditions are not safe the route is updated with alternative bays.",
+      stop: "We stop for <strong>30 minutes</strong> at the Pirate Cave: a boat approach to the cave mouth, a short swim and photo time.",
+      faq_q1: "Does the boat go inside the cave?",
+      faq_a1: "No. The rocky cave mouth is not suitable for boats to pass through; our boat approaches it at a safe distance and you can swim close to the shore during the stop. The decision to approach and swim is made by our captain when sea conditions allow.",
+      faq_q2: "What happens if the sea is rough?",
+      faq_a2: "The cave stop may be cancelled for safety reasons. On those days our route is updated with alternative bays; the departure time from Kemer Marina and the tour duration stay the same. You can check the weather and sea conditions with us on the morning of the tour.",
+      faq_q3: "Can you swim at the cave?",
+      faq_a3: "When conditions allow we stop for a short swim in the area shown by our captain. We recommend wearing a life jacket and being careful on the rocky ground.",
+      faq_q4: "Why is it called the Pirate Cave?",
+      faq_a4: "The sea caves of the region are told as hideouts of sailors and pirates in the past. This story is accepted as the source of the cave's name.",
+      cta_title: "See the Pirate Cave by Boat",
+      cta_text: "Departure from Kemer Marina every day at 09:30. Phaselis, Paradise Bay, Aquarium Bay and the Pirate Cave are all in the same day's programme; lunch and unlimited soft drinks included."
+    },
+    ru: {
+      meta_title: "Пиратская пещера Кемер | Морская прогулка к пещере",
+      meta_desc: "Пиратская пещера в Кемере: природная морская пещера, спрятанная в скалах. Лодка подходит к устью пещеры, купание в прохладной воде и фотоостановка. Остановка на нашей ежедневной морской прогулке из марины Кемера.",
+      crumb: "Пиратская пещера",
+      eyebrow: "Ежедневная морская прогулка из марины Кемера · остановка 30 мин",
+      h1: "Пиратская пещера Кемера: скрытый проход моря",
+      lead: "Природная морская пещера, спрятанная в скалах. Наша лодка контролируемо подходит к устью пещеры; во время остановки вы купаетесь в прохладной воде и фотографируете бирюзовый свет.",
+      fact1_v: "30 мин",
+      fact1_l: "Остановка у пещеры на нашем туре",
+      fact2_v: "Природная пещера",
+      fact2_l: "Проход, спрятанный в скалах",
+      fact3_v: "Скалистый проход",
+      fact3_l: "Подход на лодке",
+      fact4_v: "Фото",
+      fact4_l: "Кадры бирюзового света",
+      sec1_h2: "Где находится Пиратская пещера и как туда попасть?",
+      sec1_p1: "Пиратская пещера — природная морская пещера, спрятанная в скалах у берегов Кемера. Берег окружён отвесными скалами, поэтому добраться до пещеры по суше невозможно; самый удобный путь — <strong>морская прогулка с отправлением из марины Кемера</strong>.",
+      sec1_p2: "Пещера — одна из последних остановок нашего маршрута. В тот же день вы также увидите <a href=\"phaselis-koyu.html\">бухту Фазелис</a>, <a href=\"cennet-koyu.html\">Райскую бухту</a> и <a href=\"akvaryum-koyu.html\">Аквариум бухту</a>.",
+      sec2_h2: "Что делают у пещеры?",
+      sec2_li1: "<strong>Подход на лодке:</strong> когда море спокойное, наша лодка контролируемо подходит к устью пещеры; скальный проход вы видите с безопасного расстояния. Лодка внутрь пещеры не заходит.",
+      sec2_li2: "<strong>Купание:</strong> при подходящих условиях мы делаем короткую остановку для купания в прохладной воде рядом с пещерой.",
+      sec2_li3: "<strong>Фотографии:</strong> свет, проникающий в устье пещеры, бирюзовая вода и тёмные скалы создают сильный контраст.",
+      sec2_li4: "<strong>Прохлада:</strong> в летнюю жару тень пещеры и прохлада скал — одна из самых освежающих остановок дня.",
+      sec3_h2: "Откуда такое название?",
+      sec3_p1: "Бухты и морские пещеры этого района описываются как естественные укрытия моряков и пиратов в прошлом. Эта пещера у берегов Кемера — часть той же истории, поэтому её называют <strong>Пиратской пещерой</strong>. Сегодня это одно из самых фотографируемых мест на морских прогулках.",
+      sec4_h2: "Пиратская пещера в нашем туре",
+      sec4_p1: "В нашем туре мы делаем остановку у Пиратской пещеры на <strong>30 минут</strong>. Решение о подходе и купании всегда принимает наш капитан; если состояние моря неподходящее, лодка не подходит близко к устью пещеры, а маршрут обновляется безопасными альтернативными бухтами. С программой можно ознакомиться здесь: <a href=\"index.html#program\">программа тура и включённые услуги</a>.",
+      sec5_h2: "Безопасность и практические советы",
+      sec5_li1: "Надевайте обувь для моря: берег каменистый, а поверхности мокрые.",
+      sec5_li2: "Соблюдайте указания капитана и команды, пока лодка движется.",
+      sec5_li3: "Используйте водонепроницаемый чехол для телефона и фотоаппарата.",
+      sec5_li4: "Купание разрешено только в зоне, которую показывает капитан.",
+      sec5_li5: "Спасательные жилеты для детей есть на борту; рекомендуем ими пользоваться.",
+      note: "<b>Важно:</b> подход к пещере и остановка для купания зависят от состояния моря и погоды и от решения нашего капитана. В дни, когда условия небезопасны, маршрут обновляется альтернативными бухтами.",
+      stop: "У Пиратской пещеры мы делаем остановку на <strong>30 минут</strong>: подход на лодке к устью пещеры, короткое купание и время для фото.",
+      faq_q1: "Лодка заходит внутрь пещеры?",
+      faq_a1: "Нет. Скалистое устье пещеры не подходит для прохода лодок; наша лодка подходит к устью на безопасное расстояние, а во время остановки можно купаться недалеко от берега. Решение о подходе и купании принимает капитан, когда состояние моря позволяет.",
+      faq_q2: "Что будет, если море неспокойное?",
+      faq_a2: "Остановка у пещеры может быть отменена из соображений безопасности. В такие дни маршрут обновляется альтернативными бухтами; время отправления из марины Кемера и длительность тура не меняются. Погоду и состояние моря можно уточнить у нас утром в день тура.",
+      faq_q3: "У пещеры можно купаться?",
+      faq_a3: "При подходящих условиях мы делаем короткую остановку для купания в зоне, которую показывает капитан. Рекомендуем использовать спасательный жилет и быть внимательными на каменистом дне.",
+      faq_q4: "Почему пещеру называют Пиратской?",
+      faq_a4: "Морские пещеры этого района описываются как укрытия моряков и пиратов в прошлом. Эта история считается источником названия пещеры.",
+      cta_title: "Увидеть Пиратскую пещеру с лодки",
+      cta_text: "Отправление из марины Кемера ежедневно в 09:30. Фазелис, Райская бухта, Аквариум бухта и Пиратская пещера — в программе одного дня; обед и безлимитные безалкогольные напитки включены."
+    }
+  };
+
+  /* ===================== WHATSAPP MESAJLARI ===================== */
+  var WA_MESSAGES = {
+    general: {
+      tr: "Merhaba, Kemer yat turu hakkında bilgi ve müsaitlik almak istiyorum.",
+      en: "Hello, I would like to get information and availability for the Kemer boat tour.",
+      ru: "Здравствуйте, хочу узнать информацию и наличие мест на морскую прогулку в Кемере."
+    },
+    price: {
+      tr: "Merhaba, Kemer yat turu için fiyat ve müsaitlik bilgisi almak istiyorum. Kişi sayısı: ",
+      en: "Hello, I would like to get the price and availability for the Kemer boat tour. Number of people: ",
+      ru: "Здравствуйте, хочу узнать цену и наличие мест на морскую прогулку в Кемере. Количество человек: "
+    },
+    korsan: {
+      tr: "Merhaba, Korsan Mağarası hakkında bilgi ve müsaitlik almak istiyorum. Tarih: ",
+      en: "Hello, I would like to get information and availability about the Pirate Cave. Date: ",
+      ru: "Здравствуйте, хочу узнать информацию и наличие мест по Пиратской пещере. Дата: "
+    },
+    phaselis: {
+      tr: "Merhaba, Phaselis Koyu hakkında bilgi ve müsaitlik almak istiyorum. Tarih: ",
+      en: "Hello, I would like to get information and availability about Phaselis Bay. Date: ",
+      ru: "Здравствуйте, хочу узнать информацию и наличие мест по бухте Фазелис. Дата: "
+    },
+    cennet: {
+      tr: "Merhaba, Cennet Koyu hakkında bilgi ve müsaitlik almak istiyorum. Tarih: ",
+      en: "Hello, I would like to get information and availability about Paradise Bay. Date: ",
+      ru: "Здравствуйте, хочу узнать информацию и наличие мест по Райской бухте. Дата: "
+    },
+    akvaryum: {
+      tr: "Merhaba, Akvaryum Koyu hakkında bilgi ve müsaitlik almak istiyorum. Tarih: ",
+      en: "Hello, I would like to get information and availability about Aquarium Bay. Date: ",
+      ru: "Здравствуйте, хочу узнать информацию и наличие мест по Аквариум бухте. Дата: "
+    }
+  };
+
+  /* ===================== DIL DEGISTIRME MOTORU ===================== */
+  function mergeDict(lang) {
+    var pageKey = (document.documentElement.getAttribute("data-koy") || "").trim();
+    var out = {};
+    var base = SHARED[lang] || SHARED.tr;
+    var page = (PAGES[pageKey] && (PAGES[pageKey][lang] || PAGES[pageKey].tr)) || {};
+    var k;
+    for (k in base) { if (Object.prototype.hasOwnProperty.call(base, k)) { out[k] = base[k]; } }
+    for (k in page) { if (Object.prototype.hasOwnProperty.call(page, k)) { out[k] = page[k]; } }
+    return out;
+  }
+
+  function setLang(lang, save) {
+    if (!SHARED[lang]) { lang = "tr"; }
+    var dict = mergeDict(lang);
+
+    document.documentElement.setAttribute("lang", lang);
+
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n");
+      if (dict[key] !== undefined) { el.textContent = dict[key]; }
+    });
+
+    document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n-html");
+      if (dict[key] !== undefined) { el.innerHTML = dict[key]; }
+    });
+
+    document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n-alt");
+      if (dict[key] !== undefined) { el.setAttribute("alt", dict[key]); }
+    });
+
+    document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n-aria");
+      if (dict[key] !== undefined) { el.setAttribute("aria-label", dict[key]); }
+    });
+
+    if (dict.meta_title) { document.title = dict.meta_title; }
+    var md = document.querySelector('meta[name="description"]');
+    if (md && dict.meta_desc) { md.setAttribute("content", dict.meta_desc); }
+    var og = document.querySelector('meta[property="og:locale"]');
+    if (og) { og.setAttribute("content", OG_LOCALES[lang] || "tr_TR"); }
+
+    document.querySelectorAll(".lang-btn").forEach(function (btn) {
+      var active = btn.getAttribute("data-lang") === lang;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+
+    document.querySelectorAll('a[href*="wa.me/905321139244"]').forEach(function (a) {
+      var key = a.getAttribute("data-wa") || "general";
+      var msg = (WA_MESSAGES[key] || WA_MESSAGES.general)[lang];
+      if (msg) { a.setAttribute("href", WA_NUMBER + encodeURIComponent(msg)); }
+    });
+
+    if (save) {
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) { /* gizli mod */ }
+    }
+  }
+
+  document.querySelectorAll(".lang-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () { setLang(btn.getAttribute("data-lang"), true); });
+  });
+
+  (function initLang() {
+    var lang = "tr"; // Varsayilan dil: Turkce
+    try {
+      var urlLang = new URLSearchParams(window.location.search).get("lang");
+      if (urlLang && SHARED[urlLang.toLowerCase()]) {
+        lang = urlLang.toLowerCase();
+      } else {
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored && SHARED[stored]) { lang = stored; }
+      }
+    } catch (e) { lang = "tr"; /* file:// veya gizli mod */ }
+    setLang(lang, false);
+  })();
+})();

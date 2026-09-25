@@ -1,0 +1,58 @@
+# Kemer Yat Turu - robots.txt
+# Site: https://www.kemeryatturu.com
+# Amac: Tum arama motorlarina ve yapay zeka tarayicilarina tam erisim (indeksleme engeli YOK)
+
+User-agent: *
+Allow: /
+Disallow: /BASLAT.bat
+Disallow: /*.zip$
+Disallow: /*.ps1$
+
+# --- Yapay zeka / AI arama asistanlari (GEO: Generative Engine Optimization) ---
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# NOT: Yukaridaki "User-agent: * / Allow: /" kurali zaten hicbir botu engellemiyor.
+# AI botlari tek tek yazmamizin sebebi: hangi tarayicilara acik oldugumuzu
+# belgelemek ve ileride belirli bir botu engellemek istersek nokta atisi yapabilmek.
+
+Sitemap: https://www.kemeryatturu.com/sitemap.xml

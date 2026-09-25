@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Kemer Yat Turu - XML Site Haritasi (sitemap) - Ana sayfa + koy detay sayfalari -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <url>
+    <loc>https://www.kemeryatturu.com/</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/hero-yacht.webp</image:loc>
+      <image:title>Kemer yat turu - gunluk tekne turu</image:title>
+      <image:caption>Kemer'de turkuaz denizde seyreden luks yat - gunluk tekne turu</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/filo-yelkenli.webp</image:loc>
+      <image:title>Kemer yat turu filosu - luks yelkenli</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/phaselis-koyu.webp</image:loc>
+      <image:title>Phaselis Koyu - Kemer yat turu rotasi</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/cennet-koyu.webp</image:loc>
+      <image:title>Cennet Koyu - Kemer gunluk tekne turu</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/akvaryum-koyu.webp</image:loc>
+      <image:title>Akvaryum Koyu - snorkel molasi</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/korsan-koyu.webp</image:loc>
+      <image:title>Kemer Korsan Magarasi - deniz magarasi bolgesi ve koyu</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/kemer-marina.webp</image:loc>
+      <image:title>Kemer Marina - tur kalkis noktasi</image:title>
+    </image:image>
+  </url>
+
+  <!-- ============ KOY DETAY SAYFALARI (ic baglanti + uzun kuyruk aramalar) ============ -->
+  <url>
+    <loc>https://www.kemeryatturu.com/phaselis-koyu.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/phaselis-koyu.webp</image:loc>
+      <image:title>Phaselis Koyu - Kemer tekne turu duraklari</image:title>
+      <image:caption>Antik Phaselis kenti yanindaki cam ormanli koyda yuzme molasi</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.kemeryatturu.com/cennet-koyu.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/cennet-koyu.webp</image:loc>
+      <image:title>Cennet Koyu Kemer - turkuaz su ve ogle molasi</image:title>
+      <image:caption>Cennet Koyu'nun turkuaz suyu ve kumlu plaji - gunluk yat turu ogle molasi</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.kemeryatturu.com/akvaryum-koyu.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/akvaryum-koyu.webp</image:loc>
+      <image:title>Akvaryum Koyu Kemer - snorkel ve yuzme molasi</image:title>
+      <image:caption>Akvaryum Koyu'nda berrak suda snorkel molasi - Kemer boat tour</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.kemeryatturu.com/korsan-magarasi.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.kemeryatturu.com/images/korsan-koyu.webp</image:loc>
+      <image:title>Kemer Korsan Magarasi - gunluk tekne turu rotasi</image:title>
+      <image:caption>Korsan Koyu aciklarinda derin mavi deniz - tekne turuyla yaklasilan kayalik koy</image:caption>
+    </image:image>
+  </url>
+
+</urlset>

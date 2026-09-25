@@ -1,0 +1,222 @@
+/* ==========================================================================
+   Kemer Yat Turu - Koy detay sayfalari icin ortak stil dosyasi
+   Tailwind'e bagimli DEGIL (index.html'deki derlenmis CSS'te olmayan
+   siniflar orada calismiyor). Renkler, fontlar ve golgeler ana sayfayla
+   birebir ayni degerlerde tanimlandi.
+   ========================================================================== */
+:root{
+  --o950:#062b45; --o900:#0c3d70; --o800:#18569e; --o700:#1668c4;
+  --o600:#1d81e3; --o400:#59c0ff; --o300:#8ed8ff; --o200:#bce7ff;
+  --o100:#d9f1ff; --o50:#eef9ff; --gold:#c8a25a; --gold2:#dcbb79;
+  --wa:#25d366;
+  --card:0 10px 30px -12px rgba(6,43,69,.25);
+  --lux:0 24px 60px -20px rgba(6,43,69,.45);
+  --sans:Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:"Playfair Display",Georgia,serif;
+  --wrap:1160px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{margin:0;background:#fff;color:var(--o950);font-family:var(--sans);
+  font-size:17px;line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+svg{flex:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+::selection{background:var(--gold);color:var(--o950)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- Yerlesim ---------- */
+.wrap{width:100%;max-width:var(--wrap);margin:0 auto;padding:0 20px}
+@media(min-width:768px){.wrap{padding:0 32px}}
+.grid{display:grid;gap:18px}
+@media(min-width:640px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols-2-lg{grid-template-columns:1.15fr .85fr}
+}
+.center{text-align:center}
+
+/* ---------- Ust menu ---------- */
+.head{position:sticky;top:0;z-index:60;background:rgba(6,43,69,.95);
+  backdrop-filter:saturate(160%) blur(14px);box-shadow:0 10px 30px -18px rgba(0,0,0,.6)}
+.head .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  min-height:66px;padding-top:8px;padding-bottom:8px}
+.brand{display:flex;align-items:center;gap:11px;color:#fff}
+.brand img{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.12)}
+.brand b{display:block;font-size:16px;line-height:1.15;letter-spacing:.2px}
+.brand small{display:block;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--o100);opacity:.85}
+.head-nav{display:none;gap:4px}
+@media(min-width:1024px){.head-nav{display:flex}}
+.head-nav a{padding:9px 13px;border-radius:12px;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600}
+.head-nav a:hover{background:rgba(255,255,255,.1)}
+.head-actions{display:flex;align-items:center;gap:9px}
+.hide-sm{display:none}
+@media(min-width:768px){.hide-sm{display:inline-flex}}
+
+/* ---------- Butonlar ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  border:0;border-radius:999px;padding:14px 24px;font:inherit;font-size:15px;
+  font-weight:800;cursor:pointer;transition:transform .25s ease,background-color .25s ease,
+  color .25s ease,box-shadow .25s ease}
+.btn svg{width:17px;height:17px}
+.btn-gold{background:var(--gold);color:var(--o950);box-shadow:var(--card)}
+.btn-gold:hover{background:var(--gold2)}
+.btn-wa{background:var(--wa);color:#fff}
+.btn-wa:hover{filter:brightness(1.08)}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.btn-ghost:hover{background:#fff;color:var(--o950)}
+.btn-line{background:#fff;color:var(--o950);box-shadow:inset 0 0 0 1.5px var(--o100)}
+.btn-line:hover{background:var(--o50)}
+.btn-sm{padding:10px 16px;font-size:13.5px}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;isolation:isolate;color:#fff;overflow:hidden;
+  background:var(--o950);padding:26px 0 54px}
+.hero-media{position:absolute;inset:0;z-index:-2}
+.hero-media img{width:100%;height:100%;object-fit:cover}
+.hero-media::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(6,43,69,.86) 0%,rgba(6,43,69,.55) 45%,rgba(6,43,69,.88) 100%)}
+.hero h1{font-family:var(--display);font-size:clamp(29px,6.6vw,52px);line-height:1.08;
+  margin:16px 0 0;font-weight:700;text-shadow:0 3px 22px rgba(3,26,42,.45)}
+.hero p.lead{margin:16px 0 0;font-size:clamp(15.5px,2.3vw,18px);line-height:1.65;
+  color:rgba(238,249,255,.92);max-width:62ch}
+.hero .btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;border-radius:999px;
+  background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
+  padding:8px 15px;font-size:12.5px;font-weight:700;backdrop-filter:blur(6px)}
+.eyebrow svg{width:15px;height:15px;color:var(--gold2)}
+
+/* ---------- Kirinti izi ---------- */
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12.5px;
+  color:rgba(217,241,255,.8);margin:0 0 4px}
+.crumbs a:hover{color:#fff;text-decoration:underline}
+.crumbs span{opacity:.55}
+.crumbs [aria-current]{color:#fff;font-weight:700}
+
+/* ---------- Rakam kutusu ---------- */
+.facts{display:grid;gap:12px;margin:26px 0 0;padding:0;list-style:none;
+  grid-template-columns:repeat(2,1fr)}
+@media(min-width:768px){.facts{grid-template-columns:repeat(4,1fr)}}
+.facts li{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
+  border-radius:18px;padding:13px 15px;backdrop-filter:blur(6px)}
+.facts b{display:block;font-family:var(--display);font-size:20px;color:var(--gold2)}
+.facts small{display:block;font-size:11.5px;line-height:1.35;color:rgba(238,249,255,.85)}
+
+/* ---------- Icerik ---------- */
+.main{padding:52px 0 8px}
+@media(min-width:768px){.main{padding:72px 0 8px}}
+.article{max-width:74ch}
+.article h2{font-family:var(--display);font-size:clamp(23px,3.6vw,32px);line-height:1.2;
+  margin:44px 0 0;font-weight:700}
+.article h2:first-child{margin-top:0}
+.article h3{font-size:18.5px;margin:26px 0 0;font-weight:800}
+.article p{margin:14px 0 0;color:rgba(12,61,112,.86)}
+.article ul,.article ol{margin:16px 0 0;padding-left:22px;color:rgba(12,61,112,.86)}
+.article li{margin:8px 0 0}
+.article li::marker{color:var(--gold)}
+.article strong{color:var(--o950)}
+.article a:not(.btn){color:var(--o700);font-weight:700;
+  text-decoration:underline;text-decoration-color:var(--o300);text-underline-offset:3px}
+.article a:not(.btn):hover{color:var(--o950)}
+.side{display:grid;gap:18px;align-content:start}
+@media(min-width:900px){.side{position:sticky;top:96px}}
+
+/* ---------- Kartlar / kutular ---------- */
+.card{background:#fff;border-radius:24px;padding:22px;
+  box-shadow:var(--card),inset 0 0 0 1px var(--o100)}
+.card h2,.card h3{margin:0;font-size:17px;font-family:var(--sans);font-weight:800}
+.card p{margin:10px 0 0;font-size:14.5px;color:rgba(12,61,112,.8)}
+.card ul{margin:12px 0 0;padding-left:20px;font-size:14.5px;color:rgba(12,61,112,.8)}
+.card ul li{margin:7px 0 0}
+.card .btn{width:100%;margin-top:16px}
+.tint{background:var(--o50)}
+.note{border-radius:18px;background:rgba(200,162,90,.15);
+  box-shadow:inset 0 0 0 1px rgba(200,162,90,.35);padding:16px 18px;margin:24px 0 0;
+  font-size:15px;color:var(--o900)}
+.note b{color:var(--o950)}
+
+/* ---------- S.S.S. ---------- */
+.faq{border-radius:20px;background:#fff;margin:12px 0 0;overflow:hidden;
+  box-shadow:var(--card),inset 0 0 0 1px var(--o100)}
+.faq summary{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  cursor:pointer;list-style:none;padding:14px 18px;font-weight:800;font-size:15.5px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{background:var(--o50)}
+.faq .ico{transition:transform .3s ease;color:var(--o700);width:17px;height:17px}
+.faq[open] .ico{transform:rotate(180deg)}
+.faq .ans{padding:0 18px 16px;font-size:15px;color:rgba(12,61,112,.85)}
+.faq .ans p{margin:0}
+.faq-more{margin:26px 0 0;text-align:center;font-size:15px}
+
+/* ---------- CTA ---------- */
+.cta{margin:56px 0 0;border-radius:28px;padding:32px 24px;color:#fff;text-align:center;
+  background:linear-gradient(160deg,var(--o900) 0%,var(--o950) 100%);box-shadow:var(--lux)}
+@media(min-width:768px){.cta{padding:44px 40px}}
+.cta h2{font-family:var(--display);font-size:clamp(22px,3.4vw,31px);margin:0;font-weight:700}
+.cta p{margin:12px auto 0;max-width:60ch;color:rgba(238,249,255,.88)}
+.cta .btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:24px}
+
+/* ---------- Diger koylar ---------- */
+.more{margin:56px 0 0}
+.more h2{font-family:var(--display);font-size:clamp(21px,3vw,27px);margin:0}
+.more .grid{margin-top:20px}
+.more a{display:block;border-radius:20px;overflow:hidden;background:#fff;
+  box-shadow:var(--card);transition:transform .35s ease,box-shadow .35s ease}
+.more a:hover,.more a:focus-visible{transform:translateY(-6px);box-shadow:var(--lux)}
+.more img{height:150px;width:100%;object-fit:cover}
+.more .t{padding:14px 16px}
+.more b{font-family:var(--display);font-size:16.5px}
+.more small{display:block;margin-top:5px;font-size:13px;color:rgba(12,61,112,.75)}
+
+/* ---------- Alt bilgi ---------- */
+.foot{margin-top:64px;background:var(--o950);color:var(--o100);padding:44px 0 96px;
+  font-size:14.5px}
+@media(min-width:768px){.foot{padding-bottom:44px}}
+.foot .grid{gap:26px}
+@media(min-width:768px){.foot .grid{grid-template-columns:1.3fr 1fr 1fr}}
+.foot h2{font-size:13px;letter-spacing:1.4px;text-transform:uppercase;color:#fff;margin:0}
+.foot ul{list-style:none;margin:14px 0 0;padding:0}
+.foot li{margin:9px 0 0}
+.foot a:hover{color:var(--gold2)}
+.foot .about{color:rgba(217,241,255,.72);margin:14px 0 0;max-width:42ch;font-size:14px}
+.foot .brand{margin-bottom:2px}
+
+/* ---------- Sabit mobil aksiyon cubugu ---------- */
+.sticky{position:fixed;left:0;right:0;bottom:0;z-index:70;display:grid;
+  grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px;
+  background:rgba(6,43,69,.95);backdrop-filter:blur(10px);
+  box-shadow:0 -10px 30px -18px rgba(0,0,0,.6)}
+@media(min-width:768px){.sticky{display:none}}
+.sticky .btn{padding:13px 12px;font-size:14px}
+
+/* ---------- Ikonlar (satir ici SVG sprite) ---------- */
+.i{height:1em;width:auto;display:inline-block;vertical-align:-.125em;fill:currentColor}
+
+/* ---------- Bolum basligi (govde disi) ---------- */
+.sec-h{font-family:var(--display);font-size:clamp(23px,3.6vw,32px);line-height:1.2;
+  font-weight:700;margin:0 0 18px}
+
+/* ---------- Dil secici (TR / EN / RU) ---------- */
+.lang-switch{display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;
+  background:rgba(255,255,255,.15);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.lang-btn{border:0;background:transparent;color:#fff;font:inherit;font-size:12px;font-weight:800;
+  line-height:1;padding:7px 9px;border-radius:999px;cursor:pointer;
+  transition:background-color .25s ease,color .25s ease}
+.lang-btn:hover{background:rgba(255,255,255,.16)}
+.lang-btn.is-active{background:#fff;color:var(--o900)}
+@media(min-width:768px){.lang-btn{font-size:12.5px;padding:7px 11px}}
+@media(max-width:430px){
+  .lang-btn{padding:6px 7px;font-size:11px}
+  .brand small{display:none}
+  .brand b{font-size:14.5px}
+}
+
+/* ---------- Hareket azaltma ---------- */
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
