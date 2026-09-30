@@ -1,5 +1,5 @@
 # Kemer Yat Turu - robots.txt
-# Site: https://www.kemeryatturu.com
+# Site: https://kemeryattur.com.tr
 # Amac: Tum arama motorlarina ve yapay zeka tarayicilarina tam erisim (indeksleme engeli YOK)
 
 User-agent: *
@@ -55,4 +55,4 @@ Allow: /
 # AI botlari tek tek yazmamizin sebebi: hangi tarayicilara acik oldugumuzu
 # belgelemek ve ileride belirli bir botu engellemek istersek nokta atisi yapabilmek.
 
-Sitemap: https://www.kemeryatturu.com/sitemap.xml
+Sitemap: https://kemeryattur.com.tr/sitemap.xml

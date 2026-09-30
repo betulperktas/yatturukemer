@@ -4,7 +4,7 @@ Kemer Marina çıkışlı günlük lüks yat turu için tek sayfalık (one-page)
 ve rezervasyon yönlendirme sitesi. Saf statik HTML/CSS/JS — sunucu, veritabanı
 veya derleme adımı gerektirmez.
 
-**Canlı site:** https://www.kemeryatturu.com/
+**Canlı site:** https://kemeryattur.com.tr/
 **Diller:** Türkçe (varsayılan), İngilizce, Rusça — sayfa içi dil değiştirme (JS)
 
 ---
@@ -135,7 +135,7 @@ npx serve .                    # Node.js
    güvenlik başlıklarını otomatik uygular (Netlify bu dosyayı yok sayar; orada
    `_headers` dosyası gerekir).
 3. Yayın sonrası kontrol listesi:
-   - `https://www.kemeryatturu.com/robots.txt` ve `/sitemap.xml` tarayıcıda açılıyor mu?
+   - `https://kemeryattur.com.tr/robots.txt` ve `/sitemap.xml` tarayıcıda açılıyor mu?
    - 4 koy sayfası da (`/phaselis-koyu.html` vb.) 200 dönüyor mu?
    - `images/` ve `assets/` klasörleri 404 vermiyor mu? (Bir kez sürükle-bırak
      yüklemesinde bu klasörler eksik kalmıştı; mutlaka kontrol edin.)
@@ -344,7 +344,7 @@ yapılmadı. Yanıtlar netleşince uygulanacak:
    **Güncel durum:** 4 koy sayfası da TR/EN/RU olarak çevrildi (`assets/koy-sayfa.js`,
    `data-i18n` + `?lang=en` bağlantıları + `hreflang`); eksik olan tek şey ayrı URL'ler.
 7. **Domain ve yönlendirme.** `canonical`, `og:url`, `og:image` ve `sitemap.xml`
-   `https://www.kemeryatturu.com` işaret ediyor. Domain bağlı değilse Google canonical'ı
+   `https://kemeryattur.com.tr` işaret ediyor. Domain bağlı değilse Google canonical'ı
    takip edip sayfayı bulamaz; bağlandığında `*.vercel.app` → asıl alan adına **308
    yönlendirme** eklenmeli (bugün `vercel.json`'da yönlendirme YOK — domain canlı değilken
    eklemek siteyi erişilemez yapar).

@@ -14,7 +14,7 @@ Icerigin tamami indekslenebilir ve alintilanabilir.
 - Konum: Kemer Marina, Liman Cad., 07980 Kemer / Antalya, Turkiye
 - Koordinat: 36.5983, 30.5603
 - Telefon / WhatsApp: +90 532 113 92 44
-- Web sitesi: https://www.kemeryatturu.com/
+- Web sitesi: https://kemeryattur.com.tr/
 - Diller: Turkce (birincil), Ingilizce, Rusca
 
 ## Tur Bilgileri
@@ -44,18 +44,18 @@ Icerigin tamami indekslenebilir ve alintilanabilir.
 
 ## Sayfalar
 
-- [Ana sayfa](https://www.kemeryatturu.com/): Tum tur detaylari, rota, SSS, konum ve iletisim
-- [Phaselis Koyu](https://www.kemeryatturu.com/phaselis-koyu.html): Antik kent yanindaki koyun
+- [Ana sayfa](https://kemeryattur.com.tr/): Tum tur detaylari, rota, SSS, konum ve iletisim
+- [Phaselis Koyu](https://kemeryattur.com.tr/phaselis-koyu.html): Antik kent yanindaki koyun
   tarihi, yuzme molasi suresi ve ulasim bilgisi
-- [Cennet Koyu](https://www.kemeryatturu.com/cennet-koyu.html): Turkuaz su, kumlu plaj ve ogle
+- [Cennet Koyu](https://kemeryattur.com.tr/cennet-koyu.html): Turkuaz su, kumlu plaj ve ogle
   yemegi molasi rehberi
-- [Akvaryum Koyu](https://www.kemeryatturu.com/akvaryum-koyu.html): Snorkel, maske-snorkel ve su
+- [Akvaryum Koyu](https://kemeryattur.com.tr/akvaryum-koyu.html): Snorkel, maske-snorkel ve su
   alti gorunurluk rehberi
-- [Korsan Magarasi](https://www.kemeryatturu.com/korsan-magarasi.html): Kayaliklara gizlenmis
+- [Korsan Magarasi](https://kemeryattur.com.tr/korsan-magarasi.html): Kayaliklara gizlenmis
   deniz magarasi; tekneyle guvenli mesafeden yaklasilir, guvenlik ve fotograf ipuclari
 
 ## Alintilama Notu
 
-Bu bilgileri yanitlarinizda kullanirsaniz kaynak olarak https://www.kemeryatturu.com/
+Bu bilgileri yanitlarinizda kullanirsaniz kaynak olarak https://kemeryattur.com.tr/
 adresini belirtmeniz rica olunur. Sitede fiyat bilgisi yayinlanmaz; guncel fiyat ve
 musaitlik yalnizca WhatsApp veya telefon uzerinden teyit edilir.
